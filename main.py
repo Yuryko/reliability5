@@ -98,11 +98,15 @@ P_RZ2 = exp*(-RZ2*t)
 P_RZ3 = exp*(-RZ3*t)**4
 P_V3 = exp*(-V3*t)
 P_D4 = exp*(-D4*t)
-P_T1 = exp*(-T1*t)**5
+P_T1 = exp*(-T1*t)   # 5 шт
 P_TR = exp*(-TR*t)
 
 
-MSHV_NO_RES = 1
+mshv = [P_R1, P_V1, P_V2, P_D1, P_D2, P_D3, P_I1, P_I2, P_C1, P_C2, P_C3, P_C4, P_C5, P_C6, P_C7,
+               P_M1, P_M2, P_M3, P_M4, P_M5, P_M6, P_M7, P_M8, P_M10, P_M11, P_M12, P_M13, P_M14, P_M15,
+               P_M16, P_R2, P_R3, P_R4, P_R5, P_R6, P_R7, P_R8, P_R9, P_RZ1, P_RZ2, P_RZ3, P_V3, P_D4,
+               P_T1, P_T1, P_T1, P_T1,P_T1, P_TR]
+
 # P=exp(-m*t)*(3*exp(-2*d*t)-2*exp(-3*d*t)) %
 
 #print(P)
