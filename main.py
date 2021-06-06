@@ -2,6 +2,8 @@
 # создано сотрудниками АО "НИИЧаспром"
 # Данная программа предназначена для анализа надежности радиоэлектронных модулей и системы в целом
 
+import matplotlib.pyplot as plt
+
 # Значение гаммы взято из спавочника
 #                 шт. Название
 R1 = 0.015E-6        # 1  Блок (резистор.) Б19К-2-10кОм±10%	ОЖ0.206.018ТУ
@@ -55,54 +57,55 @@ TR = 0.0019E-6       # 1  Трансформатор ТИЛ3В "5"	АГ0.472.105
 exp = 2.71828
 
 vbr = []
+T = []
 
 for t in range(1, 90000, 1000):
-    P_R1 = exp*(-R1*t)
-    P_V1 = exp*(-V1*t)      # 2 шт
-    P_V2 = exp*(-V2*t)      # 2 шт
-    P_D1 = exp*(-D1*t)      # 2 шт
-    P_D2 = exp*(-D2*t)      # 2 шт
-    P_D3 = exp*(-D3*t)      # 2 шт
-    P_I1 = exp*(-I1*t)
-    P_I2 = exp*(-I2*t)
-    P_C1 = exp*(-C1*t)      # 8 шт
-    P_C2 = exp*(-C2*t)
-    P_C3 = exp*(-C3*t)
-    P_C4 = exp*(-C4*t)      # 30 шт
-    P_C5 = exp*(-C5*t)      # 2 шт
-    P_C6 = exp*(-C6*t)      # 2 шт
-    P_C7 = exp*(-C7*t)      # 3 шт
-    P_M1 = exp*(-M1*t)
-    P_M2 = exp*(-M2*t)      # 2 шт
-    P_M3 = exp*(-M3*t)      # 2 шт
-    P_M4 = exp*(-M4*t)      # 2 шт
-    P_M5 = exp*(-M5*t)
-    P_M6 = exp*(-M6*t)      # 3 шт
-    P_M7 = exp*(-M7*t)      # 2 шт
-    P_M8 = exp*(-M8*t)
-    P_M9 = exp*(-M9*t)      # (это элемент или в мажоритарном узел)
-    P_M10 = exp*(-M10*t)    # 4 шт
-    P_M11 = exp*(-M11*t)
-    P_M12 = exp*(-M12*t)
-    P_M13 = exp*(-M13*t)
-    P_M14 = exp*(-M14*t)    # 2
-    P_M15 = exp*(-M15*t)
-    P_M16 = exp*(-M16*t)    # 4 шт
-    P_R2 = exp*(-R2*t)      # 4 шт
-    P_R3 = exp*(-R3*t)
-    P_R4 = exp*(-R4*t)      # 7 шт
-    P_R5 = exp*(-R5*t)
-    P_R6 = exp*(-R6*t)      # 22 шт
-    P_R7 = exp*(-R7*t)      # 2 шт
-    P_R8 = exp*(-R8*t)
-    P_R9 = exp*(-R9*t)
-    P_RZ1 = exp*(-RZ1*t)
-    P_RZ2 = exp*(-RZ2*t)
-    P_RZ3 = exp*(-RZ3*t)    # 4 шт
-    P_V3 = exp*(-V3*t)
-    P_D4 = exp*(-D4*t)
-    P_T1 = exp*(-T1*t)      # 5 шт
-    P_TR = exp*(-TR*t)
+    P_R1 = exp**(-R1*t)
+    P_V1 = exp**(-V1*t)      # 2 шт
+    P_V2 = exp**(-V2*t)      # 2 шт
+    P_D1 = exp**(-D1*t)      # 2 шт
+    P_D2 = exp**(-D2*t)      # 2 шт
+    P_D3 = exp**(-D3*t)      # 2 шт
+    P_I1 = exp**(-I1*t)
+    P_I2 = exp**(-I2*t)
+    P_C1 = exp**(-C1*t)      # 8 шт
+    P_C2 = exp**(-C2*t)
+    P_C3 = exp**(-C3*t)
+    P_C4 = exp**(-C4*t)      # 30 шт
+    P_C5 = exp**(-C5*t)      # 2 шт
+    P_C6 = exp**(-C6*t)      # 2 шт
+    P_C7 = exp**(-C7*t)      # 3 шт
+    P_M1 = exp**(-M1*t)
+    P_M2 = exp**(-M2*t)      # 2 шт
+    P_M3 = exp**(-M3*t)      # 2 шт
+    P_M4 = exp**(-M4*t)      # 2 шт
+    P_M5 = exp**(-M5*t)
+    P_M6 = exp**(-M6*t)      # 3 шт
+    P_M7 = exp**(-M7*t)      # 2 шт
+    P_M8 = exp**(-M8*t)
+    P_M9 = exp**(-M9*t)      # (это элемент или в мажоритарном узел)
+    P_M10 = exp**(-M10*t)    # 4 шт
+    P_M11 = exp**(-M11*t)
+    P_M12 = exp**(-M12*t)
+    P_M13 = exp**(-M13*t)
+    P_M14 = exp**(-M14*t)    # 2
+    P_M15 = exp**(-M15*t)
+    P_M16 = exp**(-M16*t)    # 4 шт
+    P_R2 = exp**(-R2*t)      # 4 шт
+    P_R3 = exp**(-R3*t)
+    P_R4 = exp**(-R4*t)      # 7 шт
+    P_R5 = exp**(-R5*t)
+    P_R6 = exp**(-R6*t)      # 22 шт
+    P_R7 = exp**(-R7*t)      # 2 шт
+    P_R8 = exp**(-R8*t)
+    P_R9 = exp**(-R9*t)
+    P_RZ1 = exp**(-RZ1*t)
+    P_RZ2 = exp**(-RZ2*t)
+    P_RZ3 = exp**(-RZ3*t)    # 4 шт
+    P_V3 = exp**(-V3*t)
+    P_D4 = exp**(-D4*t)
+    P_T1 = exp**(-T1*t)      # 5 шт
+    P_TR = exp**(-TR*t)
     mshv = [P_R1,
             P_V1, P_V1,
             P_V2, P_V2,
@@ -154,7 +157,10 @@ for t in range(1, 90000, 1000):
     for x in mshv:
         result = result * x
     vbr.append(result)
-    print(result)
+    T.append(t)
+    # print(result)
+
+plt.plot(vbr, T)
 
     # P=exp(-m*t)*(3*exp(-2*d*t)-2*exp(-3*d*t)) %
 
