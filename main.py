@@ -6,22 +6,21 @@
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
-import matplotlib.pyplot as plt
-import seaborn as sns
-import warnings; warnings.filterwarnings(action='once')
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+# import warnings; warnings.filterwarnings(action='once')
 
-large = 22; med = 16; small = 12
-params = {'axes.titlesize': large,
-          'legend.fontsize': med,
-          'figure.figsize': (16, 10),
-          'axes.labelsize': med,
-          'axes.titlesize': med,
-          'xtick.labelsize': med,
-          'ytick.labelsize': med,
-          'figure.titlesize': large}
-plt.rcParams.update(params)
-plt.style.use('seaborn-whitegrid')
-sns.set_style("white")
+# large = 22; med = 16; small = 12
+# params = {'axes.titlesize': large,
+#          'legend.fontsize': med,
+#          'figure.figsize': (16, 10),
+#          'axes.labelsize': med,
+#          'xtick.labelsize': med,
+#          'ytick.labelsize': med,
+#          'figure.titlesize': large}
+# plt.rcParams.update(params)
+# plt.style.use('seaborn-whitegrid')
+# sns.set_style("white")
 # matplotlib inline
 
 # Version
@@ -177,54 +176,54 @@ for t in range(1, 90000, 1000):
              P_D4,
              P_T1, P_T1, P_T1, P_T1, P_T1,
              P_TR] # тут уже все правильно
-    MC_HV2 = [P_R1,         # пока бех мажорирования
-              P_V1, P_V1,
-              P_V2, P_V2,
-              P_D1, P_D1,
-              P_D2, P_D2,
-              P_D3, P_D3,
-              P_I1,
-              P_I2,
-              P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1,
-              P_C2,
-              P_C3,
-              P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
-              P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
-              P_C5, P_C5,
-              P_C6, P_C6,
-              P_C7, P_C7, P_C7,
-              P_M1,
-              P_M2, P_M2,
-              P_M3, P_M3,
-              P_M4, P_M4,
-              P_M5,
-              P_M6, P_M6, P_M6,
-              P_M7,
-              P_M8,
-              P_M9,
-              P_M10, P_M10, P_M10, P_M10,
-              P_M11,
-              P_M12,
-              P_M13,
-              P_M14, P_M14,
-              P_M15,
-              P_M16,  # P_M16, P_M16, P_M16,
-              P_R2,  # P_R2, P_R2, P_R2,
-              P_R3,
-              P_R4, P_R4, P_R4, P_R4, P_R4, P_R4, P_R4,
-              P_R5,
-              P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
-              P_R6, P_R6, P_R6, P_R6,  # P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
-              P_R7, P_R7,
-              P_R8,
-              P_R9,
-              P_RZ1,
-              P_RZ2,
-              P_RZ3,  # P_RZ3, P_RZ3, P_RZ3, P_RZ3,
-              P_V3,
-              P_D4,
-              P_T1, P_T1, P_T1, P_T1, P_T1,
-              P_TR]
+    # MC_HV2 = [P_R1,         # пока бех мажорирования
+    #          P_V1, P_V1,
+    #          P_V2, P_V2,
+    #          P_D1, P_D1,
+    #          P_D2, P_D2,
+    #          P_D3, P_D3,
+    #          P_I1,
+    #          P_I2,
+    #          P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1,
+    #          P_C2,
+    #          P_C3,
+    #          P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
+    #          P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
+    #          P_C5, P_C5,
+    #          P_C6, P_C6,
+    #          P_C7, P_C7, P_C7,
+    #          P_M1,
+    #          P_M2, P_M2,
+    #          P_M3, P_M3,
+    #          P_M4, P_M4,
+    #          P_M5,
+    #          P_M6, P_M6, P_M6,
+    #          P_M7,
+    #          P_M8,
+    #          P_M9,
+    #          P_M10, P_M10, P_M10, P_M10,
+    #          P_M11,
+    #          P_M12,
+    #          P_M13,
+    #          P_M14, P_M14,
+    #          P_M15,
+    #          P_M16,  # P_M16, P_M16, P_M16,
+    #          P_R2,  # P_R2, P_R2, P_R2,
+    #          P_R3,
+    #          P_R4, P_R4, P_R4, P_R4, P_R4, P_R4, P_R4,
+    #          P_R5,
+    #          P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
+    #          P_R6, P_R6, P_R6, P_R6,  # P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
+    #          P_R7, P_R7,
+    #          P_R8,
+    #          P_R9,
+    #          P_RZ1,
+    #          P_RZ2,
+    #          P_RZ3,  # P_RZ3, P_RZ3, P_RZ3, P_RZ3,
+    #          P_V3,
+    #          P_D4,
+    #          P_T1, P_T1, P_T1, P_T1, P_T1,
+    #          P_TR]
     result = 1
     for x in MC_HV:
         result = result * x
@@ -232,8 +231,8 @@ for t in range(1, 90000, 1000):
     T.append(t)
     print(result)
 
-plt.plot(T, vbr)
-plt.show()
+# plt.plot(T, vbr)
+# plt.show()
     # P=exp(-m*t)*(3*exp(-2*d*t)-2*exp(-3*d*t)) %
 
     # print(P)
