@@ -42,7 +42,7 @@ M5 = 0.0485E-6       # 1  Микросхема 1533КП7*5	бК0.347.364-12ТУ
 M6 = 0.0485E-6       # 3  Микросхема 1533ЛА3*5	бК0.347.364-01ТУ
 M7 = 0.0485E-6       # 2  Микросхема 1533ЛЕ1*5	бК0.347.364-05ТУ
 M8 = 0.0485E-6       # 1  Микросхема 1533ЛИ1*5	бК0.347.364-13ТУ
-M9 = 0.0485E-6       # 1_0  Микросхема 1533ЛП3*5	бК0.347.364-15ТУ
+M9 = 0.0485E-6       # 1_0  Микросхема 1533ЛП3*5	бК0.347.364-15ТУ (элемент "или")
 M10 = 0.0485E-6      # 1  Микросхема 1533ТМ9*5	бК0.347.364-24ТУ
 M11 = 0.0485E-6      # 4  Микросхема 1533ТМ2*5	бК0.347.364-02ТУ
 M12 = 0.0388E-6      # 1  (взял типовую 78 бит ЗУ)Микросхема 533ЛЕ4	бК0.347.141ТУ46/02
@@ -50,7 +50,7 @@ M13 = 0.0388E-6      # 1  Микросхема 533ЛЛ1	бК0.347.141ТУ7/02
 M14 = 0.0388E-6      # 2  Микросхема 533ТЛ2	бК0.347.141ТУ16/02
 M15 = 0.0872E-6      # 1  (типовая 4684 бит ЗУ) Микросхема 588ВГ7 бК0.347.367-12ТУ
 M16 = 0.4362E-6      # 4_1  (типовая для макс. знач. ЗУ) Микросхема РIС17С44-33 I/P(40)
-R2 = 0.063E-6        # 4  Резист. С2-33Н-0,125-100 Ом ±5% А-Д-В 	ОЖ0.467.093ТУ
+R2 = 0.063E-6        # 4_1  Резист. С2-33Н-0,125-100 Ом ±5% А-Д-В 	ОЖ0.467.093ТУ
 R3 = 0.063E-6        # 1  Резист. С2-33Н-0,125-220 Ом ±5% А-Д-В 	ОЖ0.467.093ТУ
 R4 = 0.063E-6        # 7  Резист. С2-33Н-0,125-470 Ом ±5% А-Д-В	ОЖ0.467.093ТУ
 R5 = 0.063E-6        # 1  Резист. С2-33Н-0,125-510 Ом ±5% А-Д-В	ОЖ0.467.093ТУ
@@ -166,8 +166,13 @@ for t in range(1, 90000, 1000):
              P_V3,
              P_D4,
              P_T1, P_T1, P_T1, P_T1, P_T1,
-             P_TR] # тут уже все правильно
-    MC_HV2 = [P_R1,         # пока бех мажорирования
+             P_TR]           # МШВ без мажорирования
+
+    MAZ = P_M16 * P_R2 * P_R6 * P_R6 * P_RZ3    # ВБР элементов мажоритарного узла, соединнных последовательно
+    P_MAZ = P_M9 * (3*(MAZ**2)-2*(MAZ**3))      # голосование 2 из 3
+    # P=exp(-m*t)*(3*exp(-2*d*t)-2*exp(-3*d*t)) %
+    MC_HV2 = [P_MAZ,
+              P_R1,
               P_V1, P_V1,
               P_V2, P_V2,
               P_D1, P_D1,
@@ -191,30 +196,29 @@ for t in range(1, 90000, 1000):
               P_M6, P_M6, P_M6,
               P_M7,
               P_M8,
-              P_M9,
               P_M10, P_M10, P_M10, P_M10,
               P_M11,
               P_M12,
               P_M13,
               P_M14, P_M14,
               P_M15,
-              P_M16,  # P_M16, P_M16, P_M16,
-              P_R2,  # P_R2, P_R2, P_R2,
               P_R3,
               P_R4, P_R4, P_R4, P_R4, P_R4, P_R4, P_R4,
               P_R5,
               P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
-              P_R6, P_R6, P_R6, P_R6,  # P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
+              P_R6, P_R6, P_R6, P_R6, P_R6,
               P_R7, P_R7,
               P_R8,
               P_R9,
               P_RZ1,
               P_RZ2,
-              P_RZ3,  # P_RZ3, P_RZ3, P_RZ3, P_RZ3,
+              P_RZ3,
               P_V3,
               P_D4,
               P_T1, P_T1, P_T1, P_T1, P_T1,
               P_TR]
+
+
     result = 1
     result1 = 1
     for x in MC_HV:
@@ -224,61 +228,32 @@ for t in range(1, 90000, 1000):
     vbr1.append(result1)
     vbr.append(result)
     T.append(t)
-    print(result)
+ #    print(result)
 
 # настройки графика
-large = 22; med = 16; small = 12
-params = {'axes.titlesize': large,
-          'legend.fontsize': med,
-          'figure.figsize': (16, 10),
-          'axes.labelsize': med,
-          'xtick.labelsize': med,
-          'ytick.labelsize': med,
-          'figure.titlesize': large}
-
-plt.rcParams.update(params)
+plt.rc('text', usetex=True)         # использование теха
 
 plt.style.use('seaborn-whitegrid')
 sns.set_style("white")
-
-# plt.plot(T, vbr)
-# plt.show()
 
 x_values1 = T
 y_values1 = vbr
 x_values2 = T
 y_values2 = vbr1
 
-# x_values3=[150,200,250,300,350]
-# y_values3=[10,20,30,40,50]
-
-fig=plt.figure()
-ax=fig.add_subplot(111, label="1")
-ax2=fig.add_subplot(111, label="2", frame_on=False)
+fig = plt.figure()
+plt.grid()                                                  # сетка
+ax = fig.add_subplot(111, label="1")
+ax2 = fig.add_subplot(111, label="2", frame_on=False)
 
 # ax3=fig.add_subplot(111, label="3", frame_on=False)
 
 ax.plot(x_values1, y_values1, color="C0")
 ax.set_xlabel("x label 1", color="C0")
-ax.set_ylabel("DBR", color="C0")
+ax.set_ylabel(r'$y = x^2$', color="C0")
 ax.tick_params(axis='x', colors="C0")
 ax.tick_params(axis='y', colors="C0")
+ax2.plot(x_values2, y_values2, color="C1")
 
-ax2.scatter(x_values2, y_values2, color="C1")
-ax2.xaxis.tick_top()
-ax2.yaxis.tick_right()
-ax2.set_xlabel('x label 2', color="C1")
-ax2.set_ylabel('y label 2', color="C1")
-ax2.xaxis.set_label_position('top')
-ax2.yaxis.set_label_position('right')
-ax2.tick_params(axis='x', colors="C1")
-ax2.tick_params(axis='y', colors="C1")
-
-# ax3.plot(x_values3, y_values3, color="C3")
-# ax3.set_xticks([])
-# ax3.set_yticks([])
 
 plt.show()
-    # P=exp(-m*t)*(3*exp(-2*d*t)-2*exp(-3*d*t)) %
-
-    # print(P)
