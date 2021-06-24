@@ -82,7 +82,7 @@ VBR = []
 VBR_MAZH = []
 T = []
 
-for t in range(1, 90000, 1000):
+for t in range(1, 90000, 1000):     # шт с мажориров _шт без маж  при
     P_R1 = exp ** (-R1 * t)
     P_V1 = exp ** (-V1 * t)  # 2 шт
     P_V2 = exp ** (-V2 * t)  # 2 шт
