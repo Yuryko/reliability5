@@ -269,10 +269,10 @@ ax.set_ylim(0.55, 1.01)
 
 ax.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax.plot(T, VBR, lw=2, label=u"без маж.")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
-ax.plot(T, VBR_MAZH, lw=2, label=u"маж. без дубл.") # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
-ax.plot(T, VBR_D, lw=2, label=u"дубл. без маж.")
-ax.plot(T, VBR_D_MAZH, lw=2, label=u"дубл. и маж.")
+ax.plot(T, VBR, lw=2, label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
+ax.plot(T, VBR_MAZH, lw=2, label=u"мажорирование без дублирования") # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
+ax.plot(T, VBR_D, lw=2, label=u"дублирование без мажорирования")
+ax.plot(T, VBR_D_MAZH, lw=2, label=u"дублирование и мажорирование")
 
 # ax.plot(X, Y3, linewidth=0,
 #        marker='o', markerfacecolor='w', markeredgecolor='k')
@@ -366,27 +366,27 @@ rel_mazh_d = str(round(D_MCHV_MAZH,3))
 
 
 ax.annotate(rel, xy=(T[-1]-100, MCHV), xycoords='data',
-            xytext=(T[-1]-15000, 0.6), textcoords='data',
+            xytext=(T[-1]-15000, 0.56), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 
 ax.annotate(rel_mazh, xy=(T[-1]-100, MCHV_MAMZ), xycoords='data',
-            xytext=(T[-1]-10000, 0.7), textcoords='data',
+            xytext=(T[-1]-15000, 0.65), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 
 ax.annotate(rel_d, xy=(T[-1]-100, D_MCHV), xycoords='data',
-            xytext=(T[-1]-10000, 0.7), textcoords='data',
+            xytext=(T[-1]-10000, 0.77), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 ax.annotate(rel_mazh_d, xy=(T[-1]-100, D_MCHV_MAZH), xycoords='data',
-            xytext=(T[-1]-10000, 0.7), textcoords='data',
+            xytext=(T[-1]-10000, 0.87), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
