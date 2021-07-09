@@ -31,15 +31,17 @@ rc('font', **font)
 
 В Части 3 формируется состав модуля, всего в данной программе их два - МШВ без мажорирования и с мажорированием.
 
-В Части 4 вычисляется ВБР для каждого из четырех случаев 
+В Части 4 вычисляется ВБР для каждого из четырех случаев (на выходе для каждого случая получается двуменый массив
+где по одной оси зависимость ВБР от времени, по другой от температуры ) 
 - без мажорирования
 - с мажорированием
 - дублирование без мажорирования
 - дублирование с мажорированием
 
 Часть 5 построение различного вида графиков'''
-
-'''Часть 1'''
+###########################
+# Часть 1
+##########################
 KV = [0.56, 0.91, 1.46, 2.31, 3.58, 5.49, 8.31, 12.43, 18.36, 26.82] # t =10 градусов, соотношение токов 0.5
 V1 = 0.00103E-6     # 2  Вилка СНП59-64/94х11В-23-1-В	НЩ0.364.061ТУ
 V2 = 0.0157E-6      # 2  Гнездо Г1,6 чер."5" В	ТУ6315.00207593842  (не нашел гамму в справочнике, взял типовую)
@@ -131,7 +133,11 @@ T = []  # время наработки в часах
 i = 0 # переменная для формаирования масиивов ВБР
 MCHV = np.array([], float)
 MCHV_MAMZ = np.array([], float)
-'''Часть 2'''
+
+###########################
+# Часть 2
+##########################
+
 for t in range(1, 90000, 1000):     # время до 90000 ч
                                                                                                                     # шт с мажориров _шт без маж
     P_R1 = [np.exp(-R1*KR[0]*t), np.exp(-R1*KR[1]*t), np.exp(-R1*KR[2]*t), np.exp(-R1*KR[3]*t), np.exp(-R1*KR[4]*t),
@@ -226,8 +232,11 @@ for t in range(1, 90000, 1000):     # время до 90000 ч
             np.exp(-T1*KD[5]*t), np.exp(-T1*KD[6]*t), np.exp(-T1*KD[7]*t), np.exp(-T1*KD[8]*t), np.exp(-T1*KD[9]*t)]  # 5 шт
     P_TR = [np.exp(-TR*KTR[0]*t), np.exp(-TR*KTR[1]*t), np.exp(-TR*KTR[2]*t), np.exp(-TR*KTR[3]*t), np.exp(-TR*KTR[4]*t),
             np.exp(-TR*KTR[5]*t), np.exp(-TR*KTR[6]*t), np.exp(-TR*KTR[7]*t), np.exp(-TR*KTR[8]*t), np.exp(-TR*KTR[9]*t)]
-
-    MCHV[i] = [P_R1,# Состав МШВ без мажорирования (матрица MC_HV для проверки состава)
+    ###########################
+    # Часть 3
+    ##########################
+    for x in range(len(P_TR)):
+        MCHV[i] = P_R1,# Состав МШВ без мажорирования (матрица MC_HV для проверки состава)
                P_V1, P_V1,
                P_V2, P_V2,
                P_D1, P_D1,
@@ -273,85 +282,71 @@ for t in range(1, 90000, 1000):     # время до 90000 ч
                P_V3,
                P_D4,
                P_T1, P_T1, P_T1, P_T1, P_T1,
-               P_TR]
-        for x in range(len(P_TR)):
+               P_TR})
+    for x in range(len(MCHV)):
             MAZ[x] = P_M16[x] * P_R2[x] * P_R6[x] * P_R6[x] * P_RZ3[x]  # ВБР элементов мажоритарного узла* соединнных последовательно
             P_MAZ[x] = P_M9[x] * (3 * (MAZ[x] ** 2) - 2 * (MAZ[x] ** 3)) # голосование 2 из 3
-    MCHV_MAMZ [i] = [P_MAZ,
-                     P_R1,
-                     P_V1, P_V1,
-                     P_V2, P_V2,
-                     P_D1, P_D1,
-                     P_D2, P_D2,
-                     P_D3, P_D3,
-                     P_I1,
-                     P_I2,
-                     P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1,
-                     P_C2,
-                     P_C3,
-                     P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
-                     P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
-                     P_C5, P_C5,
-                     P_C6, P_C6,
-                     P_C7, P_C7, P_C7,
-                     P_M1,
-                     P_M2, P_M2,
-                     P_M3, P_M3,
-                     P_M4, P_M4,
-                     P_M5,
-                     P_M6, P_M6, P_M6,
-                     P_M7,
-                     P_M8,
-                     P_M10, P_M10, P_M10, P_M10,
-                     P_M11,
-                     P_M12,
-                     P_M13,
-                     P_M14, P_M14,
-                     P_M15,
-                     P_R3,
-                     P_R4, P_R4, P_R4, P_R4, P_R4, P_R4, P_R4,
-                     P_R5,
-                     P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
-                     P_R6, P_R6, P_R6, P_R6, P_R6,
-                     P_R7, P_R7,
-                     P_R8,
-                     P_R9,
-                     P_RZ1,
-                     P_RZ2,
-                     P_RZ3,
-                     P_V3,
-                     P_D4,
-                     P_T1, P_T1, P_T1, P_T1, P_T1,
-                     P_TR]
-
-
-
-'''Часть 4'''
-        # Дублирование
-    for i in range(len(MCHV)):
-        for j in range(len(MCHV[i])):
-            D_MCHV[i] = P_MCHV * MCHV[j]
-
-
-            = 1 - (1 - MCHV[x]) ** 2
-
+    MCHV_MAMZ[i] = np.array({P_MAZ,
+                             P_R1,
+                             P_V1, P_V1,
+                             P_V2, P_V2,
+                             P_D1, P_D1,
+                             P_D2, P_D2,
+                             P_D3, P_D3,
+                             P_I1,
+                             P_I2,
+                             P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1, P_C1,
+                             P_C2,
+                             P_C3,
+                             P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
+                             P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4, P_C4,
+                             P_C5, P_C5,
+                             P_C6, P_C6,
+                             P_C7, P_C7, P_C7,
+                             P_M1,
+                             P_M2, P_M2,
+                             P_M3, P_M3,
+                             P_M4, P_M4,
+                             P_M5,
+                             P_M6, P_M6, P_M6,
+                             P_M7,
+                             P_M8,
+                             P_M10, P_M10, P_M10, P_M10,
+                             P_M11,
+                             P_M12,
+                             P_M13,
+                             P_M14, P_M14,
+                             P_M15,
+                             P_R3,
+                             P_R4, P_R4, P_R4, P_R4, P_R4, P_R4, P_R4,
+                             P_R5,
+                             P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6, P_R6,
+                             P_R6, P_R6, P_R6, P_R6, P_R6,
+                             P_R7, P_R7,
+                             P_R8,
+                             P_R9,
+                             P_RZ1,
+                             P_RZ2,
+                             P_RZ3,
+                             P_V3,
+                             P_D4,
+                             P_T1, P_T1, P_T1, P_T1, P_T1,
+                             P_TR})
+    ###########################
+    # Часть 3
+    ##########################
+    VBR[i]=1
+    for x in range(len(MCHV)):# Дублирование
+        VBR[i]*=MCHV[x]
+         D_MCHV[i] = P_MCHV * MCHV[x]
     VBR_D.append(D_MCHV)
-
     VBR.append(MCHV)
-
-
-
     # Состав МШВ с мажорированием
-
-
-
     D_MCHV_MAZH = 1 - (1 - MCHV_MAMZ) ** 2
-
     VBR_D_MAZH.append(D_MCHV_MAZH)
-
     VBR_MAZH.append(MCHV_MAMZ)
-
     T.append(t)
+i+=1
 
 '''Часть 5'''
 fig = plt.figure(figsize=(9, 8))
@@ -380,12 +375,12 @@ ax.set_ylim(0.55, 1.01)
 
 ax.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax.plot(T, VBR, lw=2,
+ax.plot(T, VBR[5], lw=2,
         label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
-ax.plot(T, VBR_MAZH, lw=2,
+ax.plot(T, VBR_MAZH[5], lw=2,
         label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
-ax.plot(T, VBR_D, lw=2, label=u"дублирование без мажорирования")
-ax.plot(T, VBR_D_MAZH, lw=2, label=u"дублирование и мажорирование")
+ax.plot(T, VBR_D[5], lw=2, label=u"дублирование без мажорирования")
+ax.plot(T, VBR_D_MAZH[5], lw=2, label=u"дублирование и мажорирование")
 
 # ax.plot(X, Y3, linewidth=0,
 #        marker='o', markerfacecolor='w', markeredgecolor='k')
@@ -473,12 +468,12 @@ text(-0.3, 0.45, "Figure")
 
 # стрелки с подписью про надежность
 color = 'blue'
-rel = str(round(MCHV, 3))
-rel_mazh = str(round(MCHV_MAMZ, 3))
-rel_d = str(round(D_MCHV, 3))
-rel_mazh_d = str(round(D_MCHV_MAZH, 3))
+rel = str(round(MCHV[5], 3))
+rel_mazh = str(round(MCHV_MAMZ[5], 3))
+rel_d = str(round(D_MCHV[5], 3))
+rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
 
-ax.annotate(rel, xy=(T[-1] - 100, MCHV), xycoords='data',
+ax.annotate(rel, xy=(T[-1] - 100, MCHV[5]), xycoords='data',
             xytext=(T[-1] - 15000, 0.56), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
