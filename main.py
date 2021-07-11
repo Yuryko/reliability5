@@ -121,10 +121,10 @@ RZ3 = 0.013E-6  	# 4_1  Резонатор РК386ММ-4АК-33000 кГц	ТУ63
 KTR = [1, 1.01, 1.04, 1.08, 1.13, 1.20, 1.29, 1.41, 1.57, 1.79]  # для класса Б - до 105 градусов
 TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
 
-VBR = []  		    # ВБР модуля без дублирования и мажорирования
-VBR_D = []  	    # ВБР модуля с дублированием без мажорирования
-VBR_MAZH = [] 	    # ВБР модуля с мажорированием без дублирования
-VBR_D_MAZH = []     # ВБР модуля с дублированием и мажорированием
+VBR = np.array()  		    # ВБР модуля без дублирования и мажорирования
+VBR_D = np.array()  	    # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.array() 	    # ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.array()     # ВБР модуля с дублированием и мажорированием
 D_MCHV = [] 	    # временная переменная, содержит ВБР МШВ без мажорирования для определенной температуры
 D_MCHV_MAZH = []    # временная переменная, содержит ВБР МШВ c мажорировани для определенной температуры
 P_MCHV = [] 	    # временная переменная, содержит ВБР для определенной температуры
@@ -140,7 +140,7 @@ MCHV_MAMZ = np.array([], float)
 ##########################
 
 for i in range(0, 90):     # время до 90000 ч
-    t = (i + 1) * 1000                                                                                                     # шт с мажориров _шт без маж
+    t = (i + 1) * 1000                                                                                                # шт с мажориров _шт без маж
     P_R1 = [np.exp(-R1*KR[0]*t), np.exp(-R1*KR[1]*t), np.exp(-R1*KR[2]*t), np.exp(-R1*KR[3]*t), np.exp(-R1*KR[4]*t),
             np.exp(-R1*KR[5]*t), np.exp(-R1*KR[6]*t), np.exp(-R1*KR[7]*t), np.exp(-R1*KR[8]*t), np.exp(-R1*KR[9]*t)]
     P_V1 = [np.exp(-V1*KV[0]*t), np.exp(-V1*KV[1]*t), np.exp(-V1*KV[2]*t), np.exp(-V1*KV[3]*t), np.exp(-V1*KV[4]*t),
@@ -236,122 +236,123 @@ for i in range(0, 90):     # время до 90000 ч
     ###########################
     # Часть 3
     ##########################
-                                                                                                                    # Состав МШВ без мажорирования (матрица MC_HV для проверки состава)
-    for x in range(len(P_TR)): 	# MCHV будет списком (P(t1)... P(tn))
-        MCHV[i] = P_R1[i] *\
-                  P_V1[i] * P_V1[i][i] *\
-                  P_V2[i] * P_V2[i] *\
-                  P_D1[i] * P_D1[i] *\
-                  P_D2[i] * P_D2[i] *\
-                  P_D3[i] * P_D3[i] *\
-                  P_I1[i] *\
-                  P_I2[i] *\
-                  P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] *\
-                  P_C2[i] *\
-                  P_C3[i] *\
-                  P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] *\
-                  P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] *\
-                  P_C5[i] * P_C5[i] *\
-                  P_C6[i] * P_C6[i] *\
-                  P_C7[i] * P_C7[i] * P_C7[i] *\
-                  P_M1[i] *\
-                  P_M2[i] * P_M2[i] *\
-                  P_M3[i] * P_M3[i] *\
-                  P_M4[i] * P_M4[i] *\
-                  P_M5[i] *\
-                  P_M6[i] * P_M6[i] * P_M6[i] *\
-                  P_M7[i] *\
-                  P_M8[i] *\
-                  P_M10[i] * P_M10[i] * P_M10[i] * P_M10[i] *\
-                  P_M11[i] *\
-                  P_M12[i] *\
-                  P_M13[i] *\
-                  P_M14[i] * P_M14[i] *\
-                  P_M15[i] *\
-                  P_M16[i] *\
-                  P_R2[i] *\
-                  P_R3[i] *\
-                  P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] *\
-                  P_R5[i] *\
-                  P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] *\
-                  P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] *\
-                  P_R7[i] * P_R7[i] *\
-                  P_R8[i] *\
-                  P_R9[i] *\
-                  P_RZ1[i] *\
-                  P_RZ2[i] *\
-                  P_RZ3[i] *\
-                  P_V3[i] *\
-                  P_D4[i] *\
-                  P_T1[i] * P_T1[i] * P_T1[i] * P_T1[i] * P_T1[i] *\
-                  P_TR[i]
+    # Состав МШВ без мажорирования MCHV будет списком (P(t1)... P(tn))
+    for x in range(len(P_TR)):
+        MCHV[x] = P_R1[x] *\
+                  P_V1[x] * P_V1[x] *\
+                  P_V2[x] * P_V2[x] *\
+                  P_D1[x] * P_D1[x] *\
+                  P_D2[x] * P_D2[x] *\
+                  P_D3[x] * P_D3[x] *\
+                  P_I1[x] *\
+                  P_I2[x] *\
+                  P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] *\
+                  P_C2[x] *\
+                  P_C3[x] *\
+                  P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] *\
+                  P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] *\
+                  P_C5[x] * P_C5[x] *\
+                  P_C6[x] * P_C6[x] *\
+                  P_C7[x] * P_C7[x] * P_C7[x] *\
+                  P_M1[x] *\
+                  P_M2[x] * P_M2[x] *\
+                  P_M3[x] * P_M3[x] *\
+                  P_M4[x] * P_M4[x] *\
+                  P_M5[x] *\
+                  P_M6[x] * P_M6[x] * P_M6[x] *\
+                  P_M7[x] *\
+                  P_M8[x] *\
+                  P_M10[x] * P_M10[x] * P_M10[x] * P_M10[x] *\
+                  P_M11[x] *\
+                  P_M12[x] *\
+                  P_M13[x] *\
+                  P_M14[x] * P_M14[x] *\
+                  P_M15[x] *\
+                  P_M16[x] *\
+                  P_R2[x] *\
+                  P_R3[x] *\
+                  P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] *\
+                  P_R5[x] *\
+                  P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] *\
+                  P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] *\
+                  P_R7[x] * P_R7[x] *\
+                  P_R8[x] *\
+                  P_R9[x] *\
+                  P_RZ1[x] *\
+                  P_RZ2[x] *\
+                  P_RZ3[x] *\
+                  P_V3[x] *\
+                  P_D4[x] *\
+                  P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] *\
+                  P_TR[x]
         # ВБР элементов мажоритарного узла, которые соединнных последовательно
-        MAZ[i] = P_M16[i] * P_R2[i] * P_R6[i] * P_R6[i] * P_RZ3[i]
+        MAZ[x] = P_M16[x] * P_R2[x] * P_R6[x] * P_R6[x] * P_RZ3[x]
         # голосование 2 из 3
-        P_MAZ[i] = P_M9[i] * (3 * (MAZ[i] ** 2) - 2 * (MAZ[i] ** 3))
+        P_MAZ[x] = P_M9[x] * (3 * (MAZ[x] ** 2) - 2 * (MAZ[x] ** 3))
         # Состав МШВ с мажорированием
-        MCHV_MAMZ[i] = var = P_MAZ[i] * \
-                             P_R1[i] * \
-                             P_V1[i] * P_V1[i] * \
-                             P_V2[i] * P_V2[i] * \
-                             P_D1[i] * P_D1[i] * \
-                             P_D2[i] * P_D2[i] * \
-                             P_D3[i] * P_D3[i] * \
-                             P_I1[i] * \
-                             P_I2[i] * \
-                             P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * P_C1[i] * \
-                             P_C2[i] * \
-                             P_C3[i] * \
-                             P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * \
-                             P_C4[i] * \
-                             P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * P_C4[i] * \
-                             P_C4[i] * \
-                             P_C5[i] * P_C5[i] * \
-                             P_C6[i] * P_C6[i] * \
-                             P_C7[i] * P_C7[i] * P_C7[i] * \
-                             P_M1[i] * \
-                             P_M2[i] * P_M2[i] * \
-                             P_M3[i] * P_M3[i] * \
-                             P_M4[i] * P_M4[i] * \
-                             P_M5[i] * \
-                             P_M6[i] * P_M6[i] * P_M6[i] * \
-                             P_M7[i] * \
-                             P_M8[i] * \
-                             P_M10[i] * P_M10[i] * P_M10[i] * P_M10[i] * \
-                             P_M11[i] * \
-                             P_M12[i] * \
-                             P_M13[i] * \
-                             P_M14[i] * P_M14[i] * \
-                             P_M15[i] * \
-                             P_R3[i] * \
-                             P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * P_R4[i] * \
-                             P_R5[i] * \
-                             P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * \
-                             P_R6[i] * P_R6[i] * \
-                             P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * P_R6[i] * \
-                             P_R7[i] * P_R7[i] * \
-                             P_R8[i] * \
-                             P_R9[i] * \
-                             P_RZ1[i] * \
-                             P_RZ2[i] * \
-                             P_RZ3[i] * \
-                             P_V3[i] * \
-                             P_D4[i] * \
-                             P_T1[i] * P_T1[i] * P_T1[i] * P_T1[i] * P_T1[i] * \
-                             P_TR[i]
+        MCHV_MAMZ[x] = var = P_MAZ[x] * \
+                             P_R1[x] * \
+                             P_V1[x] * P_V1[x] * \
+                             P_V2[x] * P_V2[x] * \
+                             P_D1[x] * P_D1[x] * \
+                             P_D2[x] * P_D2[x] * \
+                             P_D3[x] * P_D3[x] * \
+                             P_I1[x] * \
+                             P_I2[x] * \
+                             P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * P_C1[x] * \
+                             P_C2[x] * \
+                             P_C3[x] * \
+                             P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * \
+                             P_C4[x] * \
+                             P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * P_C4[x] * \
+                             P_C4[x] * \
+                             P_C5[x] * P_C5[x] * \
+                             P_C6[x] * P_C6[x] * \
+                             P_C7[x] * P_C7[x] * P_C7[x] * \
+                             P_M1[x] * \
+                             P_M2[x] * P_M2[x] * \
+                             P_M3[x] * P_M3[x] * \
+                             P_M4[x] * P_M4[x] * \
+                             P_M5[x] * \
+                             P_M6[x] * P_M6[x] * P_M6[x] * \
+                             P_M7[x] * \
+                             P_M8[x] * \
+                             P_M10[x] * P_M10[x] * P_M10[x] * P_M10[x] * \
+                             P_M11[x] * \
+                             P_M12[x] * \
+                             P_M13[x] * \
+                             P_M14[x] * P_M14[x] * \
+                             P_M15[x] * \
+                             P_R3[x] * \
+                             P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * P_R4[x] * \
+                             P_R5[x] * \
+                             P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * \
+                             P_R6[x] * P_R6[x] * \
+                             P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * P_R6[x] * \
+                             P_R7[x] * P_R7[x] * \
+                             P_R8[x] * \
+                             P_R9[x] * \
+                             P_RZ1[x] * \
+                             P_RZ2[x] * \
+                             P_RZ3[x] * \
+                             P_V3[x] * \
+                             P_D4[x] * \
+                             P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * \
+                             P_TR[x]
         # дублирование без мажорирования
-        D_MCHV[i] = 1- (1-MCHV[i])**2
+        D_MCHV[x] = 1- (1-MCHV[x])**2
         # дублирование с мажорированием
-        D_MCHV_MAZH[i] = 1- (1-MCHV_MAMZ[i])**2
+        D_MCHV_MAZH[x] = 1- (1-MCHV_MAMZ[x])**2
         ###########################
         # Часть 3
         ###########################
-        VBR.append(MCHV[i])
-        VBR_MAZH.append(MCHV_MAMZ[i])
-        VBR_D.append(D_MCHV[i])
-        VBR_D_MAZH.append(D_MCHV_MAZH[i])
-        T.append(t)
-i+=1
+
+      #  A = numpy.concatenate((A, newrow))
+    VBR.append(MCHV)
+    VBR_MAZH.append(MCHV_MAMZ)
+    VBR_D.append(D_MCHV)
+    VBR_D_MAZH.append(D_MCHV_MAZH)
+    T.append(t)
 
 '''Часть 5'''
 fig = plt.figure(figsize=(9, 8))
