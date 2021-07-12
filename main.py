@@ -42,6 +42,7 @@ rc('font', **font)
 ###########################
 # Часть 1
 ##########################
+
 KV = [0.56, 0.91, 1.46, 2.31, 3.58, 5.49, 8.31, 12.43, 18.36, 26.82] # t =10 градусов, соотношение токов 0.5
 V1 = 0.00103E-6     # 2  Вилка СНП59-64/94х11В-23-1-В	НЩ0.364.061ТУ
 V2 = 0.0157E-6      # 2  Гнездо Г1,6 чер."5" В	ТУ6315.00207593842  (не нашел гамму в справочнике, взял типовую)
@@ -121,10 +122,12 @@ RZ3 = 0.013E-6  	# 4_1  Резонатор РК386ММ-4АК-33000 кГц	ТУ63
 KTR = [1, 1.01, 1.04, 1.08, 1.13, 1.20, 1.29, 1.41, 1.57, 1.79]  # для класса Б - до 105 градусов
 TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
 
-VBR = np.array([], [])  		    # ВБР модуля без дублирования и мажорирования
-VBR_D = np.array([], [])  	    # ВБР модуля с дублированием без мажорирования
-VBR_MAZH = np.array([], []) 	    # ВБР модуля с мажорированием без дублирования
-VBR_D_MAZH = np.array([], [])     # ВБР модуля с дублированием и мажорированием
+time = 90 # вермя, тыс. часов
+
+VBR = np.ones(10) 		    # ВБР модуля без дублирования и мажорирования
+VBR_D = np.ones(10)  	    # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.ones(10)  	    # ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.ones(10)      # ВБР модуля с дублированием и мажорированием
 D_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР МШВ без мажорирования для определенной температуры
 D_MCHV_MAZH = np.zeros(10)    # временная переменная, содержит ВБР МШВ c мажорировани для определенной температуры
 P_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР для определенной температуры
@@ -139,7 +142,7 @@ MCHV_MAZH = np.zeros(10)
 # Часть 2
 ##########################
 
-for i in range(0, 90):     # время до 90000 ч
+for i in range(0, time):     # время до 90000 ч
     t = (i + 1) * 1000                                                                                                # шт с мажориров _шт без маж
     P_R1 = [np.exp(-R1*KR[0]*t), np.exp(-R1*KR[1]*t), np.exp(-R1*KR[2]*t), np.exp(-R1*KR[3]*t), np.exp(-R1*KR[4]*t),
             np.exp(-R1*KR[5]*t), np.exp(-R1*KR[6]*t), np.exp(-R1*KR[7]*t), np.exp(-R1*KR[8]*t), np.exp(-R1*KR[9]*t)]
@@ -233,6 +236,11 @@ for i in range(0, 90):     # время до 90000 ч
             np.exp(-T1*KD[5]*t), np.exp(-T1*KD[6]*t), np.exp(-T1*KD[7]*t), np.exp(-T1*KD[8]*t), np.exp(-T1*KD[9]*t)]  # 5 шт
     P_TR = [np.exp(-TR*KTR[0]*t), np.exp(-TR*KTR[1]*t), np.exp(-TR*KTR[2]*t), np.exp(-TR*KTR[3]*t), np.exp(-TR*KTR[4]*t),
             np.exp(-TR*KTR[5]*t), np.exp(-TR*KTR[6]*t), np.exp(-TR*KTR[7]*t), np.exp(-TR*KTR[8]*t), np.exp(-TR*KTR[9]*t)]
+
+
+
+
+
     ###########################
     # Часть 3
     ##########################
@@ -347,13 +355,19 @@ for i in range(0, 90):     # время до 90000 ч
         # Часть 3
         ###########################
 
-    VBR = numpy.concatenate((VBR, MCHV))
-    VBR_MAZH = numpy.concatenate((VBR_MAZH, MCHV_MAZH))
-    VBR_D = numpy.concatenate((VBR_D, D_MCHV))
-    VBR_D_MAZH = numpy.concatenate((VBR_D_MAZH, D_MCHV_MAZH))
+    # np.expand_dims(VBR, axis=i)
+    VBR = np.concatenate([VBR, MCHV])
+    VBR_MAZH = np.concatenate([VBR_MAZH, MCHV_MAZH])
+    VBR_D = np.concatenate([VBR_D, D_MCHV])
+    VBR_D_MAZH = np.concatenate([VBR_D_MAZH, D_MCHV_MAZH])
     T.append(t)
 
+print(VBR)
+
 '''Часть 5'''
+
+'''
+
 fig = plt.figure(figsize=(9, 8))
 ax = fig.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
 
@@ -380,12 +394,10 @@ ax.set_ylim(0.55, 1.01)
 
 ax.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax.plot(T, VBR[5], lw=2,
-        label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
-ax.plot(T, VBR_MAZH[5], lw=2,
-        label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
-ax.plot(T, VBR_D[5], lw=2, label=u"дублирование без мажорирования")
-ax.plot(T, VBR_D_MAZH[5], lw=2, label=u"дублирование и мажорирование")
+ax.plot(T, VBR[:, 5], lw=2, label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
+ax.plot(T, VBR_MAZH[:, 5], lw=2, label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
+ax.plot(T, VBR_D[:, 5], lw=2, label=u"дублирование без мажорирования")
+ax.plot(T, VBR_D_MAZH[:, 5], lw=2, label=u"дублирование и мажорирование")
 
 # ax.plot(X, Y3, linewidth=0,
 #        marker='o', markerfacecolor='w', markeredgecolor='k')
@@ -411,6 +423,7 @@ def text(x, y, text):
             ha='center', va='top', weight='bold', color='blue')
 
 
+'''
 '''
 тут всякие кружочки
 # Minor tick
@@ -470,7 +483,7 @@ circle(-0.3, 0.65)
 text(-0.3, 0.45, "Figure")
 
 '''
-
+'''
 # стрелки с подписью про надежность
 color = 'blue'
 rel = str(round(MCHV[5], 3))
@@ -511,10 +524,13 @@ ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
 #            arrowprops=dict(arrowstyle='->',
 #                            connectionstyle="arc3",
 #                            color=color))
+# cоздадим срез всех пятых элементов для построения графиков
 
 ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
         fontsize=10, ha="right", color='.5')
 
-plt.show()
+plt.show()# cоздадим срез всех пятых элементов для построения графиков
+
 
 # отображение отказа
+'''
