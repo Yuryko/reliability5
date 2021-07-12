@@ -29,7 +29,7 @@ rc('font', **font)
 Во Части 2 все коэффициенты умножаются и для каждого элемента получается 10 значения лямбда параметра для каждой 
 температуры.
 
-В Части 3 формируется состав модуля, всего в данной программе их два - МШВ без мажорирования и с мажорированием.
+В Части 3 формируется состав модуля, всего в данной программе их два - МШhttps://pythobyte.com/python-list-index-out-of-range-85896/В без мажорирования и с мажорированием.
 
 В Части 4 вычисляется ВБР для каждого из четырех случаев (на выходе для каждого случая получается двуменый массив
 где по одной оси зависимость ВБР от времени, по другой от температуры ) 
@@ -121,19 +121,19 @@ RZ3 = 0.013E-6  	# 4_1  Резонатор РК386ММ-4АК-33000 кГц	ТУ63
 KTR = [1, 1.01, 1.04, 1.08, 1.13, 1.20, 1.29, 1.41, 1.57, 1.79]  # для класса Б - до 105 градусов
 TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
 
-VBR = np.array()  		    # ВБР модуля без дублирования и мажорирования
-VBR_D = np.array()  	    # ВБР модуля с дублированием без мажорирования
-VBR_MAZH = np.array() 	    # ВБР модуля с мажорированием без дублирования
-VBR_D_MAZH = np.array()     # ВБР модуля с дублированием и мажорированием
-D_MCHV = [] 	    # временная переменная, содержит ВБР МШВ без мажорирования для определенной температуры
-D_MCHV_MAZH = []    # временная переменная, содержит ВБР МШВ c мажорировани для определенной температуры
-P_MCHV = [] 	    # временная переменная, содержит ВБР для определенной температуры
-MAZ = []  # ВБР части мажоритароного узла, где элементы соеденены последовательно
-P_MAZ = []		    # ВБР голосование 2 из 3
+VBR = np.array([], [])  		    # ВБР модуля без дублирования и мажорирования
+VBR_D = np.array([], [])  	    # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.array([], []) 	    # ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.array([], [])     # ВБР модуля с дублированием и мажорированием
+D_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР МШВ без мажорирования для определенной температуры
+D_MCHV_MAZH = np.zeros(10)    # временная переменная, содержит ВБР МШВ c мажорировани для определенной температуры
+P_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР для определенной температуры
+MAZ = np.zeros(10)  # ВБР части мажоритароного узла, где элементы соеденены последовательно
+P_MAZ = np.zeros(10)		    # ВБР голосование 2 из 3
 T = []  		    # время наработки в часах
 #i = 0 			    # переменная для формирования масиивов ВБР
-MCHV = np.array([], float)
-MCHV_MAMZ = np.array([], float)
+MCHV = np.zeros(10)
+MCHV_MAZH = np.zeros(10)
 
 ###########################
 # Часть 2
@@ -154,9 +154,9 @@ for i in range(0, 90):     # время до 90000 ч
     P_D3 = [np.exp(-D3*KD[0]*t), np.exp(-D3*KD[1]*t), np.exp(-D3*KD[2]*t), np.exp(-D3*KD[3]*t), np.exp(-D3*KD[4]*t),
             np.exp(-D3*KD[5]*t), np.exp(-D3*KD[6]*t), np.exp(-D3*KD[7]*t), np.exp(-D3*KD[8]*t), np.exp(-D3*KD[9]*t)]   # 2 шт
     P_I1 = [np.exp(-I1*KI[0]*t), np.exp(-I1*KI[1]*t), np.exp(-I1*KI[2]*t), np.exp(-I1*KI[3]*t), np.exp(-I1*KI[4]*t),
-            np.exp(-I1*KI[5]*t), np.exp(-I1*KI[6]*t), np.exp(-I1*KI[7]*t). np.exp(-I1*KI[8]*t), np.exp(-I1*KI[9]*t)]
+            np.exp(-I1*KI[5]*t), np.exp(-I1*KI[6]*t), np.exp(-I1*KI[7]*t), np.exp(-I1*KI[8]*t), np.exp(-I1*KI[9]*t)]
     P_I2 = [np.exp(-I2*KI[0]*t), np.exp(-I2*KI[1]*t), np.exp(-I2*KI[2]*t), np.exp(-I2*KI[3]*t), np.exp(-I2*KI[4]*t),
-            np.exp(-I2*KI[5]*t), np.exp(-I2*KI[6]*t), np.exp(-I2*KI[7]*t). np.exp(-I2*KI[8]*t), np.exp(-I2*KI[9]*t)]
+            np.exp(-I2*KI[5]*t), np.exp(-I2*KI[6]*t), np.exp(-I2*KI[7]*t), np.exp(-I2*KI[8]*t), np.exp(-I2*KI[9]*t)]
     P_C1 = [np.exp(-C1*KC[0]*t), np.exp(-C1*KC[1]*t), np.exp(-C1*KC[2]*t), np.exp(-C1*KC[3]*t), np.exp(-C1*KC[4]*t),
             np.exp(-C1*KC[5]*t), np.exp(-C1*KC[6]*t), np.exp(-C1*KC[7]*t), np.exp(-C1*KC[8]*t), np.exp(-C1*KC[9]*t)]  # 8 шт
     P_C2 = [np.exp(-C2*KC[0]*t), np.exp(-C2*KC[1]*t), np.exp(-C2*KC[2]*t), np.exp(-C2*KC[3]*t), np.exp(-C2*KC[4]*t),
@@ -236,8 +236,8 @@ for i in range(0, 90):     # время до 90000 ч
     ###########################
     # Часть 3
     ##########################
-    # Состав МШВ без мажорирования MCHV будет списком (P(t1)... P(tn))
-    for x in range(len(P_TR)):
+    # Состав МШВ без мажорирования MCHV будет списком (P(tn)... P(tn))
+    for x in range(0, 9):
         MCHV[x] = P_R1[x] *\
                   P_V1[x] * P_V1[x] *\
                   P_V2[x] * P_V2[x] *\
@@ -290,7 +290,7 @@ for i in range(0, 90):     # время до 90000 ч
         # голосование 2 из 3
         P_MAZ[x] = P_M9[x] * (3 * (MAZ[x] ** 2) - 2 * (MAZ[x] ** 3))
         # Состав МШВ с мажорированием
-        MCHV_MAMZ[x] = var = P_MAZ[x] * \
+        MCHV_MAZH[x] = var = P_MAZ[x] * \
                              P_R1[x] * \
                              P_V1[x] * P_V1[x] * \
                              P_V2[x] * P_V2[x] * \
@@ -340,18 +340,17 @@ for i in range(0, 90):     # время до 90000 ч
                              P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * \
                              P_TR[x]
         # дублирование без мажорирования
-        D_MCHV[x] = 1- (1-MCHV[x])**2
+        D_MCHV[x] = 1 - (1-MCHV[x])**2
         # дублирование с мажорированием
-        D_MCHV_MAZH[x] = 1- (1-MCHV_MAMZ[x])**2
+        D_MCHV_MAZH[x] = 1 - (1-MCHV_MAZH[x])**2
         ###########################
         # Часть 3
         ###########################
 
-      #  A = numpy.concatenate((A, newrow))
-    VBR.append(MCHV)
-    VBR_MAZH.append(MCHV_MAMZ)
-    VBR_D.append(D_MCHV)
-    VBR_D_MAZH.append(D_MCHV_MAZH)
+    VBR = numpy.concatenate((VBR, MCHV))
+    VBR_MAZH = numpy.concatenate((VBR_MAZH, MCHV_MAZH))
+    VBR_D = numpy.concatenate((VBR_D, D_MCHV))
+    VBR_D_MAZH = numpy.concatenate((VBR_D_MAZH, D_MCHV_MAZH))
     T.append(t)
 
 '''Часть 5'''
@@ -475,7 +474,7 @@ text(-0.3, 0.45, "Figure")
 # стрелки с подписью про надежность
 color = 'blue'
 rel = str(round(MCHV[5], 3))
-rel_mazh = str(round(MCHV_MAMZ[5], 3))
+rel_mazh = str(round(MCHV_MAZH[5], 3))
 rel_d = str(round(D_MCHV[5], 3))
 rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
 
@@ -486,20 +485,20 @@ ax.annotate(rel, xy=(T[-1] - 100, MCHV[5]), xycoords='data',
                             connectionstyle="arc3",
                             color=color))
 
-ax.annotate(rel_mazh, xy=(T[-1] - 100, MCHV_MAMZ), xycoords='data',
+ax.annotate(rel_mazh, xy=(T[-1] - 100, MCHV_MAZH[5]), xycoords='data',
             xytext=(T[-1] - 15000, 0.65), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 
-ax.annotate(rel_d, xy=(T[-1] - 100, D_MCHV), xycoords='data',
+ax.annotate(rel_d, xy=(T[-1] - 100, D_MCHV[5]), xycoords='data',
             xytext=(T[-1] - 10000, 0.77), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
-ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH), xycoords='data',
+ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
             xytext=(T[-1] - 10000, 0.87), textcoords='data',
             weight='bold', color=color,
             arrowprops=dict(arrowstyle='->',
