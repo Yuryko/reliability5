@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
+from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 
 # % matplotlib
@@ -137,6 +138,7 @@ T = []  		    # время наработки в часах
 #i = 0 			    # переменная для формирования масиивов ВБР
 MCHV = np.zeros(10)
 MCHV_MAZH = np.zeros(10)
+Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]
 
 ###########################
 # Часть 2
@@ -351,28 +353,21 @@ for i in range(0, time):     # время до 90000 ч
         # Часть 3
         ###########################
 
-    # np.expand_dims(VBR, axis=i)
     VBR = np.vstack((VBR, MCHV))
-    # VBR = VBR.reshape(VBR, :, 10)
     VBR_MAZH = np.vstack((VBR_MAZH, MCHV_MAZH))
     VBR_D = np.vstack((VBR_D, D_MCHV))
     VBR_D_MAZH = np.vstack((VBR_D_MAZH, D_MCHV_MAZH))
     T.append(t)
 
-G = VBR[1:len(T), 5]
-print (G)
-print (T)
 '''Часть 5'''
 
 fig = plt.figure(figsize=(9, 8))
 ax = fig.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
 
-
 def minor_tick(x, pos):
     if not x % 1.0:
         return ""
     return "%.2f" % x
-
 
 ax.xaxis.set_major_locator(MultipleLocator(10000.000))
 ax.xaxis.set_minor_locator(AutoMinorLocator(9))
@@ -404,7 +399,6 @@ ax.set_ylabel(u"Вероятность")
 
 ax.legend()
 
-
 def circle(x, y, radius=0.15):
     from matplotlib.patches import Circle
     from matplotlib.patheffects import withStroke
@@ -413,11 +407,9 @@ def circle(x, y, radius=0.15):
                     path_effects=[withStroke(linewidth=5, foreground='w')])
     ax.add_artist(circle)
 
-
 def text(x, y, text):
     ax.text(x, y, text, backgroundcolor="white",
             ha='center', va='top', weight='bold', color='blue')
-
 
 '''
 
@@ -521,9 +513,16 @@ ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
 #                            connectionstyle="arc3",
 #                            color=color))
 
-
 ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
         fontsize=10, ha="right", color='.5')
+
+
+
+fig1 = plt.figure()
+ax = fig1.add_subplot(111, projection='3d')
+ax.plot_surface(VBR_D_MAZH, T, T)
+ax.legend()
+
 
 plt.show()
 
