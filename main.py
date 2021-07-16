@@ -365,7 +365,7 @@ for i in range(0, time):     # время до 90000 ч
 
 '''Часть 5'''
 
-fig = plt.figure(figsize=(9, 8))
+fig = plt.figure(figsize=(40, 35))
 ax = fig.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
 
 def minor_tick(x, pos):
@@ -398,8 +398,8 @@ ax.plot(T, VBR_D_MAZH[0:len(T), 5], lw=2, label=u"дублирование и м
 #        marker='o', markerfacecolor='w', markeredgecolor='k')
 
 # ax.set_title(u"Вероятность безотказной работы", fontsize=20, verticalalignment='bottom')
-ax.set_xlabel(u"Время работы (ч)")
-ax.set_ylabel(u"Вероятность")
+ax.set_xlabel(u"Время работы (ч)", fontsize=14)
+ax.set_ylabel(u"Вероятность", fontsize=14)
 
 ax.legend()
 
@@ -422,29 +422,27 @@ rel_mazh = str(round(MCHV_MAZH[5], 3))
 rel_d = str(round(D_MCHV[5], 3))
 rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
 
-ax.annotate(rel, xy=(T[-1] - 100, MCHV[5]), xycoords='data',
+ax.annotate(rel, xy=(T[-1] - 150, MCHV[5]), xycoords='data',
             xytext=(T[-1] - 15000, 0.56), textcoords='data',
-            weight='bold', color=color,
+            weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 
-ax.annotate(rel_mazh, xy=(T[-1] - 100, MCHV_MAZH[5]), xycoords='data',
+ax.annotate(rel_mazh, xy=(T[-1] - 150, MCHV_MAZH[5]), xycoords='data',
             xytext=(T[-1] - 15000, 0.65), textcoords='data',
-            weight='bold', color=color,
+            weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
-                            connectionstyle="arc3",
-                            color=color))
+                            connectionstyle="arc3", color=color))
 
-ax.annotate(rel_d, xy=(T[-1] - 100, D_MCHV[5]), xycoords='data',
-            xytext=(T[-1] - 10000, 0.77), textcoords='data',
-            weight='bold', color=color,
+ax.annotate(rel_d, xy=(T[-1] - 150, D_MCHV[5]), xycoords='data',
+            xytext=(T[-1] - 15000, 0.77), textcoords='data',
+            weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
-                            connectionstyle="arc3",
-                            color=color))
+                            connectionstyle="arc3", color=color))
 ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
             xytext=(T[-1] - 10000, 0.87), textcoords='data',
-            weight='bold', color=color,
+            weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
@@ -457,44 +455,43 @@ ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
 #                            color=color))
 
 ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
-        fontsize=10, ha="right", color='.5')
+        fontsize=14, ha="right", color='.5')
 
 
+rel = []    # подписи к осям
 
-fig1 = plt.figure(figsize=(9, 8))
-ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
+fig1 = plt.figure(figsize=(24, 40))
+ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 220000)
 
 ax1.xaxis.set_major_locator(MultipleLocator(10000.000))
-ax1.xaxis.set_minor_locator(AutoMinorLocator(15))
-ax1.yaxis.set_major_locator(MultipleLocator(0.02))
+ax1.xaxis.set_minor_locator(AutoMinorLocator(9))
+ax1.yaxis.set_major_locator(MultipleLocator(0.025))
 
 ax1.set_xlim(0, T[-1] + 1000)
 ax1.set_ylim(0.72, 1.01)
 
 ax1.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax1.annotate(r't, C$^{\circ}$', xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
-            xytext=(T[-1] + 1000, 1.01), textcoords='data',
-            weight='bold', color=color)
+# ax1.annotate(r't, C$^{\circ}$', xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
+#            xytext=(T[-1] + 1000, 1.01), textcoords='data',
+#            weight='bold', color=color)
 
 
 for x in range(len(Z)):
-    ax1.plot(T, VBR_D_MAZH[0:len(T), x], lw=2)
-
-color = 'blue'
-
-rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
-
-ax1.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
-            xytext=(T[-1] + 1000, 0.87), textcoords='data',
-            weight='bold', color=color)
+    ax1.plot(T, VBR_D_MAZH[0:len(T), x], lw=2, label='t='+(str(Z[x]))+r'C$^{\circ}$')
+    rel.append(str(round(D_MCHV_MAZH[x], 3)))
+    ax1.annotate(rel[x], xy=(T[-1] - 100, D_MCHV_MAZH[x]), xycoords='data',
+            xytext=(T[-1] + 1000, D_MCHV_MAZH[x]), textcoords='data',
+            weight='bold', color=color, fontsize=14)
+#    color = 'blue'
 
 ax1.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
-        fontsize=10, ha="right", color='.5')
+        fontsize=14, ha="right", color='.5')
 
-ax1.set_xlabel(u"Время работы (ч)")
-ax1.set_ylabel(u"Вероятность")
+ax1.set_xlabel(u"Время работы (ч)", fontsize=14)
+ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
+ax1.legend(fontsize=14)
 
 plt.show()
 
