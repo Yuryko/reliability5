@@ -14,6 +14,8 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 
 # % matplotlib
+# from typing import List, Union
+
 warnings.filterwarnings(action='once')
 
 from matplotlib import rc  # для вывода русских букв
@@ -42,7 +44,26 @@ rc('font', **font)
 Часть 5 построение различного вида графиков'''
 ###########################
 # Часть 1
-##########################
+###########################
+time = 90                   # вермя, тыс. часов
+VBR = np.ones(10) 		    # ВБР модуля без дублирования и мажорирования
+VBR_D = np.ones(10)  	    # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.ones(10)  	# ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.ones(10)    # ВБР модуля с дублированием и мажорированием
+P_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР для определенной температуры
+MAZ = np.zeros(10)          # ВБР части мажоритароного узла, где элементы соеденены последовательно
+P_MAZ = np.zeros(10)	    # ВБР голосование 2 из 3
+T = []  		            # время наработки в часах
+MCHV = np.zeros(10)         # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ без мажорировани
+MCHV_MAZH = np.zeros(10)    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ с мажорированием
+D_MCHV = np.zeros(10) 	    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование без мажорировани
+D_MCHV_MAZH = np.zeros(10)  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование с мажорированием
+Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]    # Температура для которой расчитывается коэффициент
+
+#######################
+# данные из справочника
+#######################
+
 
 KV = [0.56, 0.91, 1.46, 2.31, 3.58, 5.49, 8.31, 12.43, 18.36, 26.82] # t =10 градусов, соотношение токов 0.5
 V1 = 0.00103E-6     # 2  Вилка СНП59-64/94х11В-23-1-В	НЩ0.364.061ТУ
@@ -122,23 +143,6 @@ RZ3 = 0.013E-6  	# 4_1  Резонатор РК386ММ-4АК-33000 кГц	ТУ63
 # Трансформатор
 KTR = [1, 1.01, 1.04, 1.08, 1.13, 1.20, 1.29, 1.41, 1.57, 1.79]  # для класса Б - до 105 градусов
 TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
-
-time = 90 # вермя, тыс. часов
-
-VBR = np.ones(10) 		    # ВБР модуля без дублирования и мажорирования
-VBR_D = np.ones(10)  	    # ВБР модуля с дублированием без мажорирования
-VBR_MAZH = np.ones(10)  	    # ВБР модуля с мажорированием без дублирования
-VBR_D_MAZH = np.ones(10)      # ВБР модуля с дублированием и мажорированием
-D_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР МШВ без мажорирования для определенной температуры
-D_MCHV_MAZH = np.zeros(10)    # временная переменная, содержит ВБР МШВ c мажорировани для определенной температуры
-P_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР для определенной температуры
-MAZ = np.zeros(10)  # ВБР части мажоритароного узла, где элементы соеденены последовательно
-P_MAZ = np.zeros(10)		    # ВБР голосование 2 из 3
-T = []  		    # время наработки в часах
-#i = 0 			    # переменная для формирования масиивов ВБР
-MCHV = np.zeros(10)
-MCHV_MAZH = np.zeros(10)
-Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]
 
 ###########################
 # Часть 2
@@ -411,67 +415,6 @@ def text(x, y, text):
     ax.text(x, y, text, backgroundcolor="white",
             ha='center', va='top', weight='bold', color='blue')
 
-'''
-
-тут всякие кружочки
-# Minor tick
-# circle(0.50, -0.10)
-# text(0.50, -0.32, "Minor tick label")
-
-# Major tick
-circle(-0.03, 4.00)
-text(0.03, 3.80, "Major tick")
-
-# Minor tick
-circle(0.00, 3.50)
-text(0.00, 3.30, "Minor tick")
-
-# Major tick label
-circle(-0.15, 3.00)
-text(-0.15, 2.80, "Major tick label")
-
-# X Label
-circle(1.80, -0.27)
-text(1.80, -0.45, "X axis label")
-
-# Y Label
-circle(-0.27, 1.80)
-text(-0.27, 1.6, "Y axis label")
-
-# Title
-circle(1.60, 4.13)
-text(1.60, 3.93, "Title")
-
-# Blue plot
-circle(1.75, 2.80)
-text(1.75, 2.60, "Line\n(line plot)")
-
-# Red plot
-circle(1.20, 0.60)
-text(1.20, 0.40, "Line\n(line plot)")
-
-# Scatter plot
-circle(3.20, 1.75)
-text(3.20, 1.55, "Markers\n(scatter plot)")
-
-# Grid
-circle(3.00, 3.00)
-text(3.00, 2.80, "Grid")
-
-# Legend
-circle(3.70, 3.80)
-text(3.70, 3.60, "Legend")
-
-# Axes
-circle(0.5, 0.5)
-text(0.5, 0.3, "Axes")
-
-# Figure
-circle(-0.3, 0.65)
-text(-0.3, 0.45, "Figure")
-
-'''
-
 # стрелки с подписью про надежность
 color = 'blue'
 rel = str(round(MCHV[5], 3))
@@ -518,12 +461,40 @@ ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
 
 
 
-fig1 = plt.figure()
-ax = fig1.add_subplot(111, projection='3d')
-ax.plot_surface(VBR_D_MAZH, T, T)
-ax.legend()
+fig1 = plt.figure(figsize=(9, 8))
+ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
 
+ax1.xaxis.set_major_locator(MultipleLocator(10000.000))
+ax1.xaxis.set_minor_locator(AutoMinorLocator(15))
+ax1.yaxis.set_major_locator(MultipleLocator(0.02))
+
+ax1.set_xlim(0, T[-1] + 1000)
+ax1.set_ylim(0.72, 1.01)
+
+ax1.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
+
+ax1.annotate(r't, C$^{\circ}$', xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
+            xytext=(T[-1] + 1000, 1.01), textcoords='data',
+            weight='bold', color=color)
+
+
+for x in range(len(Z)):
+    ax1.plot(T, VBR_D_MAZH[0:len(T), x], lw=2)
+
+color = 'blue'
+
+rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
+
+ax1.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
+            xytext=(T[-1] + 1000, 0.87), textcoords='data',
+            weight='bold', color=color)
+
+ax1.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
+        fontsize=10, ha="right", color='.5')
+
+ax1.set_xlabel(u"Время работы (ч)")
+ax1.set_ylabel(u"Вероятность")
+# ax1.set_zlabel(u"Вероятность")
 
 plt.show()
 
-# отображение отказа
