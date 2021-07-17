@@ -13,7 +13,7 @@ from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 
-# % matplotlib
+ # % matplotlib
 # from typing import List, Union
 
 warnings.filterwarnings(action='once')
@@ -300,7 +300,7 @@ for i in range(0, time):     # время до 90000 ч
         # голосование 2 из 3
         P_MAZ[x] = P_M9[x] * (3 * (MAZ[x] ** 2) - 2 * (MAZ[x] ** 3))
         # Состав МШВ с мажорированием
-        MCHV_MAZH[x] = var = P_MAZ[x] * \
+        MCHV_MAZH[x] = P_MAZ[x] * \
                              P_R1[x] * \
                              P_V1[x] * P_V1[x] * \
                              P_V2[x] * P_V2[x] * \
@@ -365,7 +365,9 @@ for i in range(0, time):     # время до 90000 ч
 
 '''Часть 5'''
 
-fig = plt.figure(figsize=(40, 35))
+fig = plt.figure(figsize=(50, 50))
+# plt.tick_params(axis='both', which='major', labelsize=14)
+plt.rcParams['font.size'] = '14'
 ax = fig.add_subplot(1, 1, 1, aspect=T[-1] + 100000)
 
 def minor_tick(x, pos):
@@ -389,10 +391,10 @@ ax.set_ylim(0.55, 1.01)
 
 ax.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax.plot(T, VBR[0:len(T), 5], lw=2, label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
-ax.plot(T, VBR_MAZH[0:len(T), 5], lw=2, label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
-ax.plot(T, VBR_D[0:len(T), 5], lw=2, label=u"дублирование без мажорирования")
-ax.plot(T, VBR_D_MAZH[0:len(T), 5], lw=2, label=u"дублирование и мажорирование")
+ax.plot(T, VBR[0:len(T), 0], lw=2, label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
+ax.plot(T, VBR_MAZH[0:len(T), 0], lw=2, label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
+ax.plot(T, VBR_D[0:len(T), 0], lw=2, label=u"дублирование без мажорирования")
+ax.plot(T, VBR_D_MAZH[0:len(T), 0], lw=2, label=u"дублирование и мажорирование")
 
 # ax.plot(X, Y3, linewidth=0,
 #        marker='o', markerfacecolor='w', markeredgecolor='k')
@@ -417,31 +419,31 @@ def text(x, y, text):
 
 # стрелки с подписью про надежность
 color = 'blue'
-rel = str(round(MCHV[5], 3))
-rel_mazh = str(round(MCHV_MAZH[5], 3))
-rel_d = str(round(D_MCHV[5], 3))
-rel_mazh_d = str(round(D_MCHV_MAZH[5], 3))
+rel = str(round(MCHV[0], 3))
+rel_mazh = str(round(MCHV_MAZH[0], 3))
+rel_d = str(round(D_MCHV[0], 3))
+rel_mazh_d = str(round(D_MCHV_MAZH[0], 3))
 
-ax.annotate(rel, xy=(T[-1] - 150, MCHV[5]), xycoords='data',
-            xytext=(T[-1] - 15000, 0.56), textcoords='data',
+ax.annotate(rel, xy=(T[-1] - 150, MCHV[0]), xycoords='data',
+            xytext=(T[-1] - 15000, 0.65), textcoords='data',
             weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
                             color=color))
 
-ax.annotate(rel_mazh, xy=(T[-1] - 150, MCHV_MAZH[5]), xycoords='data',
-            xytext=(T[-1] - 15000, 0.65), textcoords='data',
+ax.annotate(rel_mazh, xy=(T[-1] - 150, MCHV_MAZH[0]), xycoords='data',
+            xytext=(T[-1] - 15000, 0.7), textcoords='data',
             weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3", color=color))
 
-ax.annotate(rel_d, xy=(T[-1] - 150, D_MCHV[5]), xycoords='data',
-            xytext=(T[-1] - 15000, 0.77), textcoords='data',
+ax.annotate(rel_d, xy=(T[-1] - 150, D_MCHV[0]), xycoords='data',
+            xytext=(T[-1] - 15000, 0.85), textcoords='data',
             weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3", color=color))
-ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
-            xytext=(T[-1] - 10000, 0.87), textcoords='data',
+ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[0]), xycoords='data',
+            xytext=(T[-1] - 15000, 0.9), textcoords='data',
             weight='bold', color=color, fontsize=14,
             arrowprops=dict(arrowstyle='->',
                             connectionstyle="arc3",
@@ -460,7 +462,7 @@ ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
 
 rel = []    # подписи к осям
 
-fig1 = plt.figure(figsize=(24, 40))
+fig1 = plt.figure(figsize=(50, 50))
 ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 220000)
 
 ax1.xaxis.set_major_locator(MultipleLocator(10000.000))
