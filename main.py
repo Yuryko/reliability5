@@ -1,6 +1,6 @@
 # coding=utf-8
 # создано сотрудниками АО "НИИЧаспром"
-# Данная программа предназначена для анализа надежности радиоэлектронных модулей и системы в целом
+# Данная программа предназначена для анализа надежности радиоэлектронных модулей, выполн
 # !pip install brewer2mpl
 import numpy
 import numpy as np
@@ -29,10 +29,10 @@ rc('font', **font)
 Сначала приводится массив коэффициентов для температуры эксплуатации 25, 30, 35, 40, 45, 50, 55, 60, 65, 70
 Затем идут базовые значения. Эту часть предстоит расширить при появлении новых компонентов. 
 
-Во Части 2 все коэффициенты умножаются и для каждого элемента получается 10 значения лямбда параметра для каждой 
+Во Части 2 все коэффициенты умножаются и для каждого элемента получается 10 значений ВБР (для 10 коэфициентов) для каждой 
 температуры.
 
-В Части 3 формируется состав модуля, всего в данной программе их два - МШhttps://pythobyte.com/python-list-index-out-of-range-85896/В без мажорирования и с мажорированием.
+В Части 3 формируется состав модуля, всего в данной программе их два - МШВ без мажорирования и с мажорированием.
 
 В Части 4 вычисляется ВБР для каждого из четырех случаев (на выходе для каждого случая получается двуменый массив
 где по одной оси зависимость ВБР от времени, по другой от температуры ) 
@@ -41,7 +41,10 @@ rc('font', **font)
 - дублирование без мажорирования
 - дублирование с мажорированием
 
-Часть 5 построение различного вида графиков'''
+Часть 5 Вычисление необходимого ЗИП
+Вычиления делаются в соотвесвти с ГОСТ РВ 27.3.03-2005 по формуле 9.3 для разного времени пополнения ЗИП 
+
+Часть 6 построение различного вида графиков'''
 ###########################
 # Часть 1
 ###########################
@@ -59,6 +62,7 @@ MCHV_MAZH = np.zeros(10)    # для одного значения времен�
 D_MCHV = np.zeros(10) 	    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование без мажорировани
 D_MCHV_MAZH = np.zeros(10)  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование с мажорированием
 Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]    # Температура для которой расчитывается коэффициент
+Int_ot = []                  # интенсивность отказов для различной температуры
 
 #######################
 # данные из справочника
@@ -101,8 +105,8 @@ C7 = 0.155E-6  # 3  Конд. К53-18-20В-100 мкФ±10%-В	ОЖ0.464.136ТУ
 
 # микросхемы
 # для температуры [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]
-# KM1 = [0.66, 0.67, 0.74, 0.82, 0.91, 1.01, 0.257, 1.12, 1.24, 1.38]  # меньше 10 эл
-KM1 = [1.0, 1.11, 1.23, 1.37, 1.52, 1.68, 1.87, 2.07, 2.3, 2.55]  # меньше 386 бит ЗУ, от 100 до 1000 эл
+# KM = [0.66, 0.67, 0.74, 0.82, 0.91, 1.01, 0.257, 1.12, 1.24, 1.38]  # меньше 10 эл
+KM = [1.0, 1.11, 1.23, 1.37, 1.52, 1.68, 1.87, 2.07, 2.3, 2.55]  # меньше 386 бит ЗУ, от 100 до 1000 эл
 
 M1 = 0.0291E-6  	# 1 (взял типовую) Микросборка 852ИН2П	АЕЯР.431230.419ТУ
 M2 = 0.0485E-6  	# 2 (типовая 386 бит ЗУ) Микросхема 1533АП6*5	бК0.347.364-55ТУ
@@ -147,106 +151,156 @@ TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
 ###########################
 # Часть 2
 ##########################
+# потоки отказов для элементов в зависимости от температуры для этого умножаем общий поток отказов на температурный коэфициент 
 
+G_R1 = [R1*KR[0], R1*KR[1], R1*KR[2], R1*KR[3], R1*KR[4], R1*KR[5], R1*KR[6], R1*KR[7], R1*KR[8], R1*KR[9]]
+G_V1 = [V1*KV[0], V1*KV[1], V1*KV[2], V1*KV[3], V1*KV[4], V1*KV[5], V1*KV[6], V1*KV[7], V1*KV[8], V1*KV[9]]  # 2 шт
+G_V2 = [V2*KV[0], V2*KV[1], V2*KV[2], V2*KV[3], V2*KV[4], V2*KV[5], V2*KV[6], V2*KV[7], V2*KV[8], V2*KV[9]]  # 2 шт
+G_D1 = [D1*KD[0], D1*KD[1], D1*KD[2], D1*KD[3], D1*KD[4], D1*KD[5], D1*KD[6], D1*KD[7], D1*KD[8], D1*KD[9]]  # 2 шт
+G_D2 = [D2*KD[0], D2*KD[1], D2*KD[2], D2*KD[3], D2*KD[4], D2*KD[5], D2*KD[6], D2*KD[7], D2*KD[8], D2*KD[9]]  # 2 шт
+G_D3 = [D3*KD[0], D3*KD[1], D3*KD[2], D3*KD[3], D3*KD[4], D3*KD[5], D3*KD[6], D3*KD[7], D3*KD[8], D3*KD[9]]   # 2 шт
+G_I1 = [I1*KI[0], I1*KI[1], I1*KI[2], I1*KI[3], I1*KI[4], I1*KI[5], I1*KI[6], I1*KI[7], I1*KI[8], I1*KI[9]]
+G_I2 = [I2*KI[0], I2*KI[1], I2*KI[2], I2*KI[3], I2*KI[4], I2*KI[5], I2*KI[6], I2*KI[7], I2*KI[8], I2*KI[9]]
+G_C1 = [C1*KC[0], C1*KC[1], C1*KC[2], C1*KC[3], C1*KC[4], C1*KC[5], C1*KC[6], C1*KC[7], C1*KC[8], C1*KC[9]]  # 8 шт
+G_C2 = [C2*KC[0], C2*KC[1], C2*KC[2], C2*KC[3], C2*KC[4], C2*KC[5], C2*KC[6], C2*KC[7], C2*KC[8], C2*KC[9]]
+G_C3 = [C3*KC[0], C3*KC[1], C3*KC[2], C3*KC[3], C3*KC[4], C3*KC[5], C3*KC[6], C3*KC[7], C3*KC[8], C3*KC[9]]
+G_C4 = [C4*KC[0], C4*KC[1], C4*KC[2], C4*KC[3], C4*KC[4], C4*KC[5], C4*KC[6], C4*KC[7], C4*KC[8], C4*KC[9]]  # 30 шт
+G_C5 = [C5*KC[0], C5*KC[1], C5*KC[2], C5*KC[3], C5*KC[4], C5*KC[5], C5*KC[6], C5*KC[7], C5*KC[8], C5*KC[9]]  # 2 шт
+G_C6 = [C6*KC[0], C6*KC[1], C6*KC[2], C6*KC[3], C6*KC[4], C6*KC[5], C6*KC[6], C6*KC[7], C6*KC[8], C6*KC[9]]   # 2 шт
+G_C7 = [C7*KC[0], C7*KC[1], C7*KC[2], C7*KC[3], C7*KC[4], C7*KC[5], C7*KC[6], C7*KC[7], C7*KC[8], C7*KC[9]]   # 3 шт
+G_M1 = [M1*KM[0], M1*KM[1], M1*KM[2], M1*KM[3], M1*KM[4], M1*KM[5], M1*KM[6], M1*KM[7], M1*KM[8], M1*KM[9]]
+G_M2 = [M2*KM[0], M2*KM[1], M2*KM[2], M2*KM[3], M2*KM[4], M2*KM[5], M2*KM[6], M2*KM[7], M2*KM[8], M2*KM[9]]  # 2 шт
+G_M3 = [M3*KM[0], M3*KM[1], M3*KM[2], M3*KM[3], M3*KM[4], M3*KM[5], M3*KM[6], M3*KM[7], M3*KM[8], M3*KM[9]]  # 2 шт
+G_M4 = [M4*KM[0], M4*KM[1], M4*KM[2], M4*KM[3], M4*KM[4], M4*KM[5], M4*KM[6], M4*KM[7], M4*KM[8], M4*KM[9]]  # 2 шт
+G_M5 = [M5*KM[0], M5*KM[1], M5*KM[2], M5*KM[3], M5*KM[4], M5*KM[5], M5*KM[6], M5*KM[7], M5*KM[8], M5*KM[9]]
+G_M6 = [M6*KM[0], M6*KM[1], M6*KM[2], M6*KM[3], M6*KM[4], M6*KM[5], M6*KM[6], M6*KM[7], M6*KM[8], M6*KM[9]] # 3 шт
+G_M7 = [M7*KM[0], M7*KM[1], M7*KM[2], M7*KM[3], M7*KM[4], M7*KM[5], M7*KM[6], M7*KM[7], M7*KM[8], M7*KM[9]]  # 2 шт
+G_M8 = [M8*KM[0], M8*KM[1], M8*KM[2], M8*KM[3], M8*KM[4], M8*KM[5], M8*KM[6], M8*KM[7], M8*KM[8], M8*KM[9]]
+G_M9 = [M9*KM[0], M9*KM[1], M9*KM[2], M9*KM[3], M9*KM[4], M9*KM[5], M9*KM[6], M9*KM[7], M9*KM[8], M9*KM[9]]  # (это элемент "или" в мажоритарном узел)
+G_M10 = [M10*KM[0], M10*KM[1], M10*KM[2], M10*KM[3], M10*KM[4], M10*KM[5], M10*KM[6], M10*KM[7], M10*KM[8], M10*KM[9]]  # 4 шт
+G_M11 = [M11*KM[0], M11*KM[1], M11*KM[2], M11*KM[3], M11*KM[4], M11*KM[5], M11*KM[6], M11*KM[7], M11*KM[8], M11*KM[9]]
+G_M12 = [M12*KM[0], M12*KM[1], M12*KM[2], M12*KM[3], M12*KM[4], M12*KM[5], M12*KM[6], M12*KM[7], M12*KM[8], M12*KM[9]]
+G_M13 = [M13*KM[0], M13*KM[1], M13*KM[2], M13*KM[3], M13*KM[4], M13*KM[5], M13*KM[6], M13*KM[7], M13*KM[8], M13*KM[9]]
+G_M14 = [M14*KM[0], M14*KM[1], M14*KM[2], M14*KM[3], M14*KM[4], M14*KM[5], M14*KM[6], M14*KM[7], M14*KM[8], M14*KM[9]]  # 2
+G_M15 = [M15*KM[0], M15*KM[1], M15*KM[2], M15*KM[3], M15*KM[4], M15*KM[5], M15*KM[6], M15*KM[7], M15*KM[8], M15*KM[9]]
+G_M16 = [M16*KM2[0], M16*KM2[1], M16*KM2[2], M16*KM2[3], M16*KM2[4], M16*KM2[5], M16*KM2[6], M16*KM2[7], M16*KM2[8], M16*KM2[9]]  # 4_1 шт
+G_R2 = [R2*KR[0], R2*KR[1], R2*KR[2], R2*KR[3], R2*KR[4], R2*KR[5], R2*KR[6], R2*KR[7], R2*KR[8], R2*KR[9]]  # 4_1 шт
+G_R3 = [R3*KR[0], R3*KR[1], R3*KR[2], R3*KR[3], R3*KR[4], R3*KR[5], R3*KR[6], R3*KR[7], R3*KR[8], R3*KR[9]]
+G_R4 = [R4*KR[0], R4*KR[1], R4*KR[2], R4*KR[3], R4*KR[4], R4*KR[5], R4*KR[6], R4*KR[7], R4*KR[8], R4*KR[9]]  # 7 шт
+G_R5 = [R5*KR[0], R5*KR[1], R5*KR[2], R5*KR[3], R5*KR[4], R5*KR[5], R5*KR[6], R5*KR[7], R5*KR[8], R5*KR[9]]
+G_R6 = [R6*KR[0], R6*KR[1], R6*KR[2], R6*KR[3], R6*KR[4], R6*KR[5], R6*KR[6], R6*KR[7], R6*KR[8], R6*KR[9]]  # 22_16 шт
+G_R7 = [R7*KR[0], R7*KR[1], R7*KR[2], R7*KR[3], R7*KR[4], R7*KR[5], R7*KR[6], R7*KR[7], R7*KR[8], R7*KR[9]]  # 2 шт
+G_R8 = [R8*KR[0], R8*KR[1], R8*KR[2], R8*KR[3], R8*KR[4], R8*KR[5], R8*KR[6], R8*KR[7], R8*KR[8], R8*KR[9]]
+G_R9 = [R9*KR[0], R9*KR[1], R9*KR[2], R9*KR[3], R9*KR[4], R9*KR[5], R9*KR[6], R9*KR[7], R9*KR[8], R9*KR[9]]
+G_RZ1 = [RZ1*KR[0], RZ1*KR[1], RZ1*KR[2], RZ1*KR[3], RZ1*KR[4], RZ1*KR[5], RZ1*KR[6], RZ1*KR[7], RZ1*KR[8], RZ1*KR[9]]
+G_RZ2 = [RZ2*KR[0], RZ2*KR[1], RZ2*KR[2], RZ2*KR[3], RZ2*KR[4], RZ2*KR[5], RZ2*KR[6], RZ2*KR[7], RZ2*KR[8], RZ2*KR[9]]
+G_RZ3 = [RZ3*KR[0], RZ3*KR[1], RZ3*KR[2], RZ3*KR[3], RZ3*KR[4], RZ2*KR[5], RZ2*KR[6], RZ2*KR[7], RZ2*KR[8], RZ3*KR[9]]  # 4_1 шт
+G_V3 = [V3*KV[0], V3*KV[1], V3*KV[2], V3*KV[3], V3*KV[4], V3*KV[5], V3*KV[6], V3*KV[7], V3*KV[8], V3*KV[9]]
+G_D4 = [D4*KD[0], D4*KD[1], D4*KD[2], D4*KD[3], D4*KD[4], D4*KD[5], D4*KD[6], D4*KD[7], D4*KD[8], D4*KD[9]]
+G_T1 = [T1*KD[0], T1*KD[1], T1*KD[2], T1*KD[3], T1*KD[4], T1*KD[5], T1*KD[6], T1*KD[7], T1*KD[8], T1*KD[9]]  # 5 шт
+G_TR = [TR*KTR[0], TR*KTR[1], TR*KTR[2], TR*KTR[3], TR*KTR[4], TR*KTR[5], TR*KTR[6], TR*KTR[7], TR*KTR[8], TR*KTR[9]]
+
+# Вычисляем ВБР для всех входящих элементов
+ 
 for i in range(0, time):     # время до 90000 ч
     t = (i + 1) * 1000                                                                                                # шт с мажориров _шт без маж
-    P_R1 = [np.exp(-R1*KR[0]*t), np.exp(-R1*KR[1]*t), np.exp(-R1*KR[2]*t), np.exp(-R1*KR[3]*t), np.exp(-R1*KR[4]*t),
-            np.exp(-R1*KR[5]*t), np.exp(-R1*KR[6]*t), np.exp(-R1*KR[7]*t), np.exp(-R1*KR[8]*t), np.exp(-R1*KR[9]*t)]
-    P_V1 = [np.exp(-V1*KV[0]*t), np.exp(-V1*KV[1]*t), np.exp(-V1*KV[2]*t), np.exp(-V1*KV[3]*t), np.exp(-V1*KV[4]*t),
-            np.exp(-V1*KV[5]*t), np.exp(-V1*KV[6]*t), np.exp(-V1*KV[7]*t), np.exp(-V1*KV[8]*t), np.exp(-V1*KV[9]*t)]  # 2 шт
-    P_V2 = [np.exp(-V2*KV[0]*t), np.exp(-V2*KV[1]*t), np.exp(-V2*KV[2]*t), np.exp(-V2*KV[3]*t), np.exp(-V2*KV[4]*t),
-            np.exp(-V2*KV[5]*t), np.exp(-V2*KV[6]*t), np.exp(-V2*KV[7]*t), np.exp(-V2*KV[8]*t), np.exp(-V2*KV[9]*t)]  # 2 шт
-    P_D1 = [np.exp(-D1*KD[0]*t), np.exp(-D1*KD[1]*t), np.exp(-D1*KD[2]*t), np.exp(-D1*KD[3]*t), np.exp(-D1*KD[4]*t),
-            np.exp(-D1*KD[5]*t), np.exp(-D1*KD[6]*t), np.exp(-D1*KD[7]*t), np.exp(-D1*KD[8]*t), np.exp(-D1*KD[9]*t)]  # 2 шт
-    P_D2 = [np.exp(-D2*KD[0]*t), np.exp(-D2*KD[1]*t), np.exp(-D2*KD[2]*t), np.exp(-D2*KD[3]*t), np.exp(-D2*KD[4]*t),
-            np.exp(-D2*KD[5]*t), np.exp(-D2*KD[6]*t), np.exp(-D2*KD[7]*t), np.exp(-D2*KD[8]*t), np.exp(-D2*KD[9]*t)]  # 2 шт
-    P_D3 = [np.exp(-D3*KD[0]*t), np.exp(-D3*KD[1]*t), np.exp(-D3*KD[2]*t), np.exp(-D3*KD[3]*t), np.exp(-D3*KD[4]*t),
-            np.exp(-D3*KD[5]*t), np.exp(-D3*KD[6]*t), np.exp(-D3*KD[7]*t), np.exp(-D3*KD[8]*t), np.exp(-D3*KD[9]*t)]   # 2 шт
-    P_I1 = [np.exp(-I1*KI[0]*t), np.exp(-I1*KI[1]*t), np.exp(-I1*KI[2]*t), np.exp(-I1*KI[3]*t), np.exp(-I1*KI[4]*t),
-            np.exp(-I1*KI[5]*t), np.exp(-I1*KI[6]*t), np.exp(-I1*KI[7]*t), np.exp(-I1*KI[8]*t), np.exp(-I1*KI[9]*t)]
-    P_I2 = [np.exp(-I2*KI[0]*t), np.exp(-I2*KI[1]*t), np.exp(-I2*KI[2]*t), np.exp(-I2*KI[3]*t), np.exp(-I2*KI[4]*t),
-            np.exp(-I2*KI[5]*t), np.exp(-I2*KI[6]*t), np.exp(-I2*KI[7]*t), np.exp(-I2*KI[8]*t), np.exp(-I2*KI[9]*t)]
-    P_C1 = [np.exp(-C1*KC[0]*t), np.exp(-C1*KC[1]*t), np.exp(-C1*KC[2]*t), np.exp(-C1*KC[3]*t), np.exp(-C1*KC[4]*t),
-            np.exp(-C1*KC[5]*t), np.exp(-C1*KC[6]*t), np.exp(-C1*KC[7]*t), np.exp(-C1*KC[8]*t), np.exp(-C1*KC[9]*t)]  # 8 шт
-    P_C2 = [np.exp(-C2*KC[0]*t), np.exp(-C2*KC[1]*t), np.exp(-C2*KC[2]*t), np.exp(-C2*KC[3]*t), np.exp(-C2*KC[4]*t),
-            np.exp(-C2*KC[5]*t), np.exp(-C2*KC[6]*t), np.exp(-C2*KC[7]*t), np.exp(-C2*KC[8]*t), np.exp(-C2*KC[9]*t)]
-    P_C3 = [np.exp(-C3*KC[0]*t), np.exp(-C3*KC[1]*t), np.exp(-C3*KC[2]*t), np.exp(-C3*KC[3]*t), np.exp(-C3*KC[4]*t),
-            np.exp(-C3*KC[5]*t), np.exp(-C3*KC[6]*t), np.exp(-C3*KC[7]*t), np.exp(-C3*KC[8]*t), np.exp(-C3*KC[9]*t)]
-    P_C4 = [np.exp(-C4*KC[0]*t), np.exp(-C4*KC[1]*t), np.exp(-C4*KC[2]*t), np.exp(-C4*KC[3]*t), np.exp(-C4*KC[4]*t),
-            np.exp(-C4*KC[5]*t), np.exp(-C4*KC[6]*t), np.exp(-C4*KC[7]*t), np.exp(-C4*KC[8]*t), np.exp(-C4*KC[9]*t)]  # 30 шт
-    P_C5 = [np.exp(-C5*KC[0]*t), np.exp(-C5*KC[1]*t), np.exp(-C5*KC[2]*t), np.exp(-C5*KC[3]*t), np.exp(-C5*KC[4]*t),
-            np.exp(-C5*KC[5]*t), np.exp(-C5*KC[6]*t), np.exp(-C5*KC[7]*t), np.exp(-C5*KC[8]*t), np.exp(-C5*KC[9]*t)]  # 2 шт
-    P_C6 = [np.exp(-C6*KC[0]*t), np.exp(-C6*KC[1]*t), np.exp(-C6*KC[2]*t), np.exp(-C6*KC[3]*t), np.exp(-C6*KC[4]*t),
-            np.exp(-C6*KC[5]*t), np.exp(-C6*KC[6]*t), np.exp(-C6*KC[7]*t), np.exp(-C6*KC[8]*t), np.exp(-C6*KC[9]*t)]   # 2 шт
-    P_C7 = [np.exp(-C7*KC[0]*t), np.exp(-C7*KC[1]*t), np.exp(-C7*KC[2]*t), np.exp(-C7*KC[3]*t), np.exp(-C7*KC[4]*t),
-            np.exp(-C7*KC[5]*t), np.exp(-C7*KC[6]*t), np.exp(-C7*KC[7]*t), np.exp(-C7*KC[8]*t), np.exp(-C7*KC[9]*t)]   # 3 шт
-    P_M1 = [np.exp(-M1*KM1[0]*t), np.exp(-M1*KM1[1]*t), np.exp(-M1*KM1[2]*t), np.exp(-M1*KM1[3]*t), np.exp(-M1*KM1[4]*t),
-            np.exp(-M1*KM1[5]*t), np.exp(-M1*KM1[6]*t), np.exp(-M1*KM1[7]*t), np.exp(-M1*KM1[8]*t), np.exp(-M1*KM1[9]*t)]
-    P_M2 = [np.exp(-M2*KM1[0]*t), np.exp(-M2*KM1[1]*t), np.exp(-M2*KM1[2]*t), np.exp(-M2*KM1[3]*t), np.exp(-M2*KM1[4]*t),
-            np.exp(-M2*KM1[5]*t), np.exp(-M2*KM1[6]*t), np.exp(-M2*KM1[7]*t), np.exp(-M2*KM1[8]*t), np.exp(-M2*KM1[9]*t)]  # 2 шт
-    P_M3 = [np.exp(-M3*KM1[0]*t), np.exp(-M3*KM1[1]*t), np.exp(-M3*KM1[2]*t), np.exp(-M3*KM1[3]*t), np.exp(-M3*KM1[4]*t),
-            np.exp(-M3*KM1[5]*t), np.exp(-M3*KM1[6]*t), np.exp(-M3*KM1[7]*t), np.exp(-M3*KM1[8]*t), np.exp(-M3*KM1[9]*t)]  # 2 шт
-    P_M4 = [np.exp(-M4*KM1[0]*t), np.exp(-M4*KM1[1]*t), np.exp(-M4*KM1[2]*t), np.exp(-M4*KM1[3]*t), np.exp(-M4*KM1[4]*t),
-            np.exp(-M4*KM1[5]*t), np.exp(-M4*KM1[6]*t), np.exp(-M4*KM1[7]*t), np.exp(-M4*KM1[8]*t), np.exp(-M4*KM1[9]*t)]  # 2 шт
-    P_M5 = [np.exp(-M5*KM1[0]*t), np.exp(-M5*KM1[1]*t), np.exp(-M5*KM1[2]*t), np.exp(-M5*KM1[3]*t), np.exp(-M5*KM1[4]*t),
-            np.exp(-M5*KM1[5]*t), np.exp(-M5*KM1[6]*t), np.exp(-M5*KM1[7]*t), np.exp(-M5*KM1[8]*t), np.exp(-M5*KM1[9]*t)]
-    P_M6 = [np.exp(-M6*KM1[0]*t), np.exp(-M6*KM1[1]*t), np.exp(-M6*KM1[2]*t), np.exp(-M6*KM1[3]*t), np.exp(-M6*KM1[4]*t),
-            np.exp(-M6*KM1[5]*t), np.exp(-M6*KM1[6]*t), np.exp(-M6*KM1[7]*t), np.exp(-M6*KM1[8]*t), np.exp(-M6*KM1[9]*t)] # 3 шт
-    P_M7 = [np.exp(-M7*KM1[0]*t), np.exp(-M7*KM1[1]*t), np.exp(-M7*KM1[2]*t), np.exp(-M7*KM1[3]*t), np.exp(-M7*KM1[4]*t),
-            np.exp(-M7*KM1[5]*t), np.exp(-M7*KM1[6]*t), np.exp(-M7*KM1[7]*t), np.exp(-M7*KM1[8]*t), np.exp(-M7*KM1[9]*t)]  # 2 шт
-    P_M8 = [np.exp(-M8*KM1[0]*t), np.exp(-M8*KM1[1]*t), np.exp(-M8*KM1[2]*t), np.exp(-M8*KM1[3]*t), np.exp(-M8*KM1[4]*t),
-            np.exp(-M8*KM1[5]*t), np.exp(-M8*KM1[6]*t), np.exp(-M8*KM1[7]*t), np.exp(-M8*KM1[8]*t), np.exp(-M8*KM1[9]*t)]
-    P_M9 = [np.exp(-M9*KM1[0]*t), np.exp(-M9*KM1[1]*t), np.exp(-M9*KM1[2]*t), np.exp(-M9*KM1[3]*t), np.exp(-M9*KM1[4]*t),
-            np.exp(-M9*KM1[5]*t), np.exp(-M9*KM1[6]*t), np.exp(-M9*KM1[7]*t), np.exp(-M9*KM1[8]*t), np.exp(-M9*KM1[9]*t)]  # (это элемент "или" в мажоритарном узел)
-    P_M10 = [np.exp(-M10*KM1[0]*t), np.exp(-M10*KM1[1]*t), np.exp(-M10*KM1[2]*t), np.exp(-M10*KM1[3]*t), np.exp(-M10*KM1[4]*t),
-             np.exp(-M10*KM1[5]*t), np.exp(-M10*KM1[6]*t), np.exp(-M10*KM1[7]*t), np.exp(-M10*KM1[8]*t), np.exp(-M10*KM1[9]*t)]  # 4 шт
-    P_M11 = [np.exp(-M11*KM1[0]*t), np.exp(-M11*KM1[1]*t), np.exp(-M11*KM1[2]*t), np.exp(-M11*KM1[3]*t), np.exp(-M11*KM1[4]*t),
-             np.exp(-M11*KM1[5]*t), np.exp(-M11*KM1[6]*t), np.exp(-M11*KM1[7]*t), np.exp(-M11*KM1[8]*t), np.exp(-M11*KM1[9]*t)]
-    P_M12 = [np.exp(-M12*KM1[0]*t), np.exp(-M12*KM1[1]*t), np.exp(-M12*KM1[2]*t), np.exp(-M12*KM1[3]*t), np.exp(-M12*KM1[4]*t),
-             np.exp(-M12*KM1[5]*t), np.exp(-M12*KM1[6]*t), np.exp(-M12*KM1[7]*t), np.exp(-M12*KM1[8]*t), np.exp(-M12*KM1[9]*t)]
-    P_M13 = [np.exp(-M13*KM1[0]*t), np.exp(-M13*KM1[1]*t), np.exp(-M13*KM1[2]*t), np.exp(-M13*KM1[3]*t), np.exp(-M13*KM1[4]*t),
-             np.exp(-M13*KM1[5]*t), np.exp(-M13*KM1[6]*t), np.exp(-M13*KM1[7]*t), np.exp(-M13*KM1[8]*t), np.exp(-M13*KM1[9]*t)]
-    P_M14 = [np.exp(-M14*KM1[0]*t), np.exp(-M14*KM1[1]*t), np.exp(-M14*KM1[2]*t), np.exp(-M14*KM1[3]*t), np.exp(-M14*KM1[4]*t),
-             np.exp(-M14*KM1[5]*t), np.exp(-M14*KM1[6]*t), np.exp(-M14*KM1[7]*t), np.exp(-M14*KM1[8]*t), np.exp(-M14*KM1[9]*t)]  # 2
-    P_M15 = [np.exp(-M15*KM1[0]*t), np.exp(-M15*KM1[1]*t), np.exp(-M15*KM1[2]*t), np.exp(-M15*KM1[3]*t), np.exp(-M15*KM1[4]*t),
-             np.exp(-M15*KM1[5]*t), np.exp(-M15*KM1[6]*t), np.exp(-M15*KM1[7]*t), np.exp(-M15*KM1[8]*t), np.exp(-M15*KM1[9]*t)]
-    P_M16 = [np.exp(-M16*KM2[0]*t), np.exp(-M16*KM2[1]*t), np.exp(-M16*KM2[2]*t), np.exp(-M16*KM2[3]*t), np.exp(-M16*KM2[4]*t),
-             np.exp(-M16*KM2[5]*t), np.exp(-M16*KM2[6]*t), np.exp(-M16*KM2[7]*t), np.exp(-M16*KM2[8]*t), np.exp(-M16*KM2[9]*t)]  # 4_1 шт
-    P_R2 = [np.exp(-R2*KR[0]*t), np.exp(-R2*KR[1]*t), np.exp(-R2*KR[2]*t), np.exp(-R2*KR[3]*t), np.exp(-R2*KR[4]*t),
-            np.exp(-R2*KR[5]*t), np.exp(-R2*KR[6]*t), np.exp(-R2*KR[7]*t), np.exp(-R2*KR[8]*t), np.exp(-R2*KR[9]*t)]  # 4_1 шт
-    P_R3 = [np.exp(-R3*KR[0]*t), np.exp(-R3*KR[1]*t), np.exp(-R3*KR[2]*t), np.exp(-R3*KR[3]*t), np.exp(-R3*KR[4]*t),
-            np.exp(-R3*KR[5]*t), np.exp(-R3*KR[6]*t), np.exp(-R3*KR[7]*t), np.exp(-R3*KR[8]*t), np.exp(-R3*KR[9]*t)]
-    P_R4 = [np.exp(-R4*KR[0]*t), np.exp(-R4*KR[1]*t), np.exp(-R4*KR[2]*t), np.exp(-R4*KR[3]*t), np.exp(-R4*KR[4]*t),
-            np.exp(-R4*KR[5]*t), np.exp(-R4*KR[6]*t), np.exp(-R4*KR[7]*t), np.exp(-R4*KR[8]*t), np.exp(-R4*KR[9]*t)]  # 7 шт
-    P_R5 = [np.exp(-R5*KR[0]*t), np.exp(-R5*KR[1]*t), np.exp(-R5*KR[2]*t), np.exp(-R5*KR[3]*t), np.exp(-R5*KR[4]*t),
-            np.exp(-R5*KR[5]*t), np.exp(-R5*KR[6]*t), np.exp(-R5*KR[7]*t), np.exp(-R5*KR[8]*t), np.exp(-R5*KR[9]*t)]
-    P_R6 = [np.exp(-R6*KR[0]*t), np.exp(-R6*KR[1]*t), np.exp(-R6*KR[2]*t), np.exp(-R6*KR[3]*t), np.exp(-R6*KR[4]*t),
-            np.exp(-R6*KR[5]*t), np.exp(-R6*KR[6]*t), np.exp(-R6*KR[7]*t), np.exp(-R6*KR[8]*t), np.exp(-R6*KR[9]*t)]  # 22_16 шт
-    P_R7 = [np.exp(-R7*KR[0]*t), np.exp(-R7*KR[1]*t), np.exp(-R7*KR[2]*t), np.exp(-R7*KR[3]*t), np.exp(-R7*KR[4]*t),
-            np.exp(-R7*KR[5]*t), np.exp(-R7*KR[6]*t), np.exp(-R7*KR[7]*t), np.exp(-R7*KR[8]*t), np.exp(-R7*KR[9]*t)]  # 2 шт
-    P_R8 = [np.exp(-R8*KR[0]*t), np.exp(-R8*KR[1]*t), np.exp(-R8*KR[2]*t), np.exp(-R8*KR[3]*t), np.exp(-R8*KR[4]*t),
-            np.exp(-R8*KR[5]*t), np.exp(-R8*KR[6]*t), np.exp(-R8*KR[7]*t), np.exp(-R8*KR[8]*t), np.exp(-R8*KR[9]*t)]
-    P_R9 = [np.exp(-R9*KR[0]*t), np.exp(-R9*KR[1]*t), np.exp(-R9*KR[2]*t), np.exp(-R9*KR[3]*t), np.exp(-R9*KR[4]*t),
-            np.exp(-R9*KR[5]*t), np.exp(-R9*KR[6]*t), np.exp(-R9*KR[7]*t), np.exp(-R9*KR[8]*t), np.exp(-R9*KR[9]*t)]
-    P_RZ1 = [np.exp(-RZ1*KR[0]*t), np.exp(-RZ1*KR[1]*t), np.exp(-RZ1*KR[2]*t), np.exp(-RZ1*KR[3]*t), np.exp(-RZ1*KR[4]*t),
-            np.exp(-RZ1*KR[5]*t), np.exp(-RZ1*KR[6]*t), np.exp(-RZ1*KR[7]*t), np.exp(-RZ1*KR[8]*t), np.exp(-RZ1*KR[9]*t)]
-    P_RZ2 = [np.exp(-RZ2*KR[0]*t), np.exp(-RZ2*KR[1]*t), np.exp(-RZ2*KR[2]*t), np.exp(-RZ2*KR[3]*t), np.exp(-RZ2*KR[4]*t),
-            np.exp(-RZ2*KR[5]*t), np.exp(-RZ2*KR[6]*t), np.exp(-RZ2*KR[7]*t), np.exp(-RZ2*KR[8]*t), np.exp(-RZ2*KR[9]*t)]
-    P_RZ3 = [np.exp(-RZ3*KR[0]*t), np.exp(-RZ3*KR[1]*t), np.exp(-RZ3*KR[2]*t), np.exp(-RZ3*KR[3]*t), np.exp(-RZ3*KR[4]*t),
-            np.exp(-RZ2*KR[5]*t), np.exp(-RZ2*KR[6]*t), np.exp(-RZ2*KR[7]*t), np.exp(-RZ2*KR[8]*t), np.exp(-RZ3*KR[9]*t)]  # 4_1 шт
-    P_V3 = [np.exp(-V3*KV[0]*t), np.exp(-V3*KV[1]*t), np.exp(-V3*KV[2]*t), np.exp(-V3*KV[3]*t), np.exp(-V3*KV[4]*t),
-            np.exp(-V3*KV[5]*t), np.exp(-V3*KV[6]*t), np.exp(-V3*KV[7]*t), np.exp(-V3*KV[8]*t), np.exp(-V3*KV[9]*t)]
-    P_D4 = [np.exp(-D4*KD[0]*t), np.exp(-D4*KD[1]*t), np.exp(-D4*KD[2]*t), np.exp(-D4*KD[3]*t), np.exp(-D4*KD[4]*t),
-            np.exp(-D4*KD[5]*t), np.exp(-D4*KD[6]*t), np.exp(-D4*KD[7]*t), np.exp(-D4*KD[8]*t), np.exp(-D4*KD[9]*t)]
-    P_T1 = [np.exp(-T1*KD[0]*t), np.exp(-T1*KD[1]*t), np.exp(-T1*KD[2]*t), np.exp(-T1*KD[3]*t), np.exp(-T1*KD[4]*t),
-            np.exp(-T1*KD[5]*t), np.exp(-T1*KD[6]*t), np.exp(-T1*KD[7]*t), np.exp(-T1*KD[8]*t), np.exp(-T1*KD[9]*t)]  # 5 шт
-    P_TR = [np.exp(-TR*KTR[0]*t), np.exp(-TR*KTR[1]*t), np.exp(-TR*KTR[2]*t), np.exp(-TR*KTR[3]*t), np.exp(-TR*KTR[4]*t),
-            np.exp(-TR*KTR[5]*t), np.exp(-TR*KTR[6]*t), np.exp(-TR*KTR[7]*t), np.exp(-TR*KTR[8]*t), np.exp(-TR*KTR[9]*t)]
+    P_R1 = [np.exp(-G_R1[0]*t), np.exp(-G_R1[1]*t), np.exp(-G_R1[2]*t), np.exp(-G_R1[3]*t), np.exp(-G_R1[4]*t),
+            np.exp(-G_R1[5]*t), np.exp(-G_R1[6]*t), np.exp(-G_R1[7]*t), np.exp(-G_R1[8]*t), np.exp(-G_R1[9]*t)]
+    P_V1 = [np.exp(-G_V1[0]*t), np.exp(-G_V1[1]*t), np.exp(-G_V1[2]*t), np.exp(-G_V1[3]*t), np.exp(-G_V1[4]*t),
+            np.exp(-G_V1[5]*t), np.exp(-G_V1[6]*t), np.exp(-G_V1[7]*t), np.exp(-G_V1[8]*t), np.exp(-G_V1[9]*t)]  # 2 шт
+    P_V2 = [np.exp(-G_V2[0]*t), np.exp(-G_V2[1]*t), np.exp(-G_V2[2]*t), np.exp(-G_V2[3]*t), np.exp(-G_V2[4]*t),
+            np.exp(-G_V2[5]*t), np.exp(-G_V2[6]*t), np.exp(-G_V2[7]*t), np.exp(-G_V2[8]*t), np.exp(-G_V2[9]*t)]  # 2 шт
+    P_D1 = [np.exp(-G_D1[0]*t), np.exp(-G_D1[1]*t), np.exp(-G_D1[2]*t), np.exp(-G_D1[3]*t), np.exp(-G_D1[4]*t),
+            np.exp(-G_D1[5]*t), np.exp(-G_D1[6]*t), np.exp(-G_D1[7]*t), np.exp(-G_D1[8]*t), np.exp(-G_D1[9]*t)]  # 2 шт
+    P_D2 = [np.exp(-G_D2[0]*t), np.exp(-G_D2[1]*t), np.exp(-G_D2[2]*t), np.exp(-G_D2[3]*t), np.exp(-G_D2[4]*t),
+            np.exp(-G_D2[5]*t), np.exp(-G_D2[6]*t), np.exp(-G_D2[7]*t), np.exp(-G_D2[8]*t), np.exp(-G_D2[9]*t)]  # 2 шт
+    P_D3 = [np.exp(-G_D3[0]*t), np.exp(-G_D3[1]*t), np.exp(-G_D3[2]*t), np.exp(-G_D3[3]*t), np.exp(-G_D3[4]*t),
+            np.exp(-G_D3[5]*t), np.exp(-G_D3[6]*t), np.exp(-G_D3[7]*t), np.exp(-G_D3[8]*t), np.exp(-G_D3[9]*t)]   # 2 шт
+    P_I1 = [np.exp(-G_I1[0]*t), np.exp(-G_I1[1]*t), np.exp(-G_I1[2]*t), np.exp(-G_I1[3]*t), np.exp(-G_I1[4]*t),
+            np.exp(-G_I1[5]*t), np.exp(-G_I1[6]*t), np.exp(-G_I1[7]*t), np.exp(-G_I1[8]*t), np.exp(-G_I1[9]*t)]
+    P_I2 = [np.exp(-G_I2[0]*t), np.exp(-G_I2[1]*t), np.exp(-G_I2[2]*t), np.exp(-G_I2[3]*t), np.exp(-G_I2[4]*t),
+            np.exp(-G_I2[5]*t), np.exp(-G_I2[6]*t), np.exp(-G_I2[7]*t), np.exp(-G_I2[8]*t), np.exp(-G_I2[9]*t)]
+    P_C1 = [np.exp(-G_C1[0]*t), np.exp(-G_C1[1]*t), np.exp(-G_C1[2]*t), np.exp(-G_C1[3]*t), np.exp(-G_C1[4]*t),
+            np.exp(-G_C1[5]*t), np.exp(-G_C1[6]*t), np.exp(-G_C1[7]*t), np.exp(-G_C1[8]*t), np.exp(-G_C1[9]*t)]  # 8 шт
+    P_C2 = [np.exp(-G_C2[0]*t), np.exp(-G_C2[1]*t), np.exp(-G_C2[2]*t), np.exp(-G_C2[3]*t), np.exp(-G_C2[4]*t),
+            np.exp(-G_C2[5]*t), np.exp(-G_C2[6]*t), np.exp(-G_C2[7]*t), np.exp(-G_C2[8]*t), np.exp(-G_C2[9]*t)]
+    P_C3 = [np.exp(-G_C3[0]*t), np.exp(-G_C3[1]*t), np.exp(-G_C3[2]*t), np.exp(-G_C3[3]*t), np.exp(-G_C3[4]*t),
+            np.exp(-G_C3[5]*t), np.exp(-G_C3[6]*t), np.exp(-G_C3[7]*t), np.exp(-G_C3[8]*t), np.exp(-G_C3[9]*t)]
+    P_C4 = [np.exp(-G_C4[0]*t), np.exp(-G_C4[1]*t), np.exp(-G_C4[2]*t), np.exp(-G_C4[3]*t), np.exp(-G_C4[4]*t),
+            np.exp(-G_C4[5]*t), np.exp(-G_C4[6]*t), np.exp(-G_C4[7]*t), np.exp(-G_C4[8]*t), np.exp(-G_C4[9]*t)]  # 30 шт
+    P_C5 = [np.exp(-G_C5[0]*t), np.exp(-G_C5[1]*t), np.exp(-G_C5[2]*t), np.exp(-G_C5[3]*t), np.exp(-G_C5[4]*t),
+            np.exp(-G_C5[5]*t), np.exp(-G_C5[6]*t), np.exp(-G_C5[7]*t), np.exp(-G_C5[8]*t), np.exp(-G_C5[9]*t)]  # 2 шт
+    P_C6 = [np.exp(-G_C6[0]*t), np.exp(-G_C6[1]*t), np.exp(-G_C6[2]*t), np.exp(-G_C6[3]*t), np.exp(-G_C6[4]*t),
+            np.exp(-G_C6[5]*t), np.exp(-G_C6[6]*t), np.exp(-G_C6[7]*t), np.exp(-G_C6[8]*t), np.exp(-G_C6[9]*t)]   # 2 шт
+    P_C7 = [np.exp(-G_C7[0]*t), np.exp(-G_C7[1]*t), np.exp(-G_C7[2]*t), np.exp(-G_C7[3]*t), np.exp(-G_C7[4]*t),
+            np.exp(-G_C7[5]*t), np.exp(-G_C7[6]*t), np.exp(-G_C7[7]*t), np.exp(-G_C7[8]*t), np.exp(-G_C7[9]*t)]   # 3 шт
+    P_M1 = [np.exp(-G_M1[0]*t), np.exp(-G_M1[1]*t), np.exp(-G_M1[2]*t), np.exp(-G_M1[3]*t), np.exp(-G_M1[4]*t),
+            np.exp(-G_M1[5]*t), np.exp(-G_M1[6]*t), np.exp(-G_M1[7]*t), np.exp(-G_M1[8]*t), np.exp(-G_M1[9]*t)]
+    P_M2 = [np.exp(-G_M2[0]*t), np.exp(-G_M2[1]*t), np.exp(-G_M2[2]*t), np.exp(-G_M2[3]*t), np.exp(-G_M2[4]*t),
+            np.exp(-G_M2[5]*t), np.exp(-G_M2[6]*t), np.exp(-G_M2[7]*t), np.exp(-G_M2[8]*t), np.exp(-G_M2[9]*t)]  # 2 шт
+    P_M3 = [np.exp(-G_M3[0]*t), np.exp(-G_M3[1]*t), np.exp(-G_M3[2]*t), np.exp(-G_M3[3]*t), np.exp(-G_M3[4]*t),
+            np.exp(-G_M3[5]*t), np.exp(-G_M3[6]*t), np.exp(-G_M3[7]*t), np.exp(-G_M3[8]*t), np.exp(-G_M3[9]*t)]  # 2 шт
+    P_M4 = [np.exp(-G_M4[0]*t), np.exp(-G_M4[1]*t), np.exp(-G_M4[2]*t), np.exp(-G_M4[3]*t), np.exp(-G_M4[4]*t),
+            np.exp(-G_M4[5]*t), np.exp(-G_M4[6]*t), np.exp(-G_M4[7]*t), np.exp(-G_M4[8]*t), np.exp(-G_M4[9]*t)]  # 2 шт
+    P_M5 = [np.exp(-G_M5[0]*t), np.exp(-G_M5[1]*t), np.exp(-G_M5[2]*t), np.exp(-G_M5[3]*t), np.exp(-G_M5[4]*t),
+            np.exp(-G_M5[5]*t), np.exp(-G_M5[6]*t), np.exp(-G_M5[7]*t), np.exp(-G_M5[8]*t), np.exp(-G_M5[9]*t)]
+    P_M6 = [np.exp(-G_M6[0]*t), np.exp(-G_M6[1]*t), np.exp(-G_M6[2]*t), np.exp(-G_M6[3]*t), np.exp(-G_M6[4]*t),
+            np.exp(-G_M6[5]*t), np.exp(-G_M6[6]*t), np.exp(-G_M6[7]*t), np.exp(-G_M6[8]*t), np.exp(-G_M6[9]*t)] # 3 шт
+    P_M7 = [np.exp(-G_M7[0]*t), np.exp(-G_M7[1]*t), np.exp(-G_M7[2]*t), np.exp(-G_M7[3]*t), np.exp(-G_M7[4]*t),
+            np.exp(-G_M7[5]*t), np.exp(-G_M7[6]*t), np.exp(-G_M7[7]*t), np.exp(-G_M7[8]*t), np.exp(-G_M7[9]*t)]  # 2 шт
+    P_M8 = [np.exp(-G_M8[0]*t), np.exp(-G_M8[1]*t), np.exp(-G_M8[2]*t), np.exp(-G_M8[3]*t), np.exp(-G_M8[4]*t),
+            np.exp(-G_M8[5]*t), np.exp(-G_M8[6]*t), np.exp(-G_M8[7]*t), np.exp(-G_M8[8]*t), np.exp(-G_M8[9]*t)]
+    P_M9 = [np.exp(-G_M9[0]*t), np.exp(-G_M9[1]*t), np.exp(-G_M9[2]*t), np.exp(-G_M9[3]*t), np.exp(-G_M9[4]*t),
+            np.exp(-G_M9[5]*t), np.exp(-G_M9[6]*t), np.exp(-G_M9[7]*t), np.exp(-G_M9[8]*t), np.exp(-G_M9[9]*t)]  # (это элемент "или" в мажоритарном узел)
+    P_M10 = [np.exp(-G_M10[0]*t), np.exp(-G_M10[1]*t), np.exp(-G_M10[2]*t), np.exp(-G_M10[3]*t), np.exp(-G_M10[4]*t),
+             np.exp(-G_M10[5]*t), np.exp(-G_M10[6]*t), np.exp(-G_M10[7]*t), np.exp(-G_M10[8]*t), np.exp(-G_M10[9]*t)]  # 4 шт
+    P_M11 = [np.exp(-G_M11[0]*t), np.exp(-G_M11[1]*t), np.exp(-G_M11[2]*t), np.exp(-G_M11[3]*t), np.exp(-G_M11[4]*t),
+             np.exp(-G_M11[5]*t), np.exp(-G_M11[6]*t), np.exp(-G_M11[7]*t), np.exp(-G_M11[8]*t), np.exp(-G_M11[9]*t)]
+    P_M12 = [np.exp(-G_M12[0]*t), np.exp(-G_M12[1]*t), np.exp(-G_M12[2]*t), np.exp(-G_M12[3]*t), np.exp(-G_M12[4]*t),
+             np.exp(-G_M12[5]*t), np.exp(-G_M12[6]*t), np.exp(-G_M12[7]*t), np.exp(-G_M12[8]*t), np.exp(-G_M12[9]*t)]
+    P_M13 = [np.exp(-G_M13[0]*t), np.exp(-G_M13[1]*t), np.exp(-G_M13[2]*t), np.exp(-G_M13[3]*t), np.exp(-G_M13[4]*t),
+             np.exp(-G_M13[5]*t), np.exp(-G_M13[6]*t), np.exp(-G_M13[7]*t), np.exp(-G_M13[8]*t), np.exp(-G_M13[9]*t)]
+    P_M14 = [np.exp(-G_M14[0]*t), np.exp(-G_M14[1]*t), np.exp(-G_M14[2]*t), np.exp(-G_M14[3]*t), np.exp(-G_M14[4]*t),
+             np.exp(-G_M14[5]*t), np.exp(-G_M14[6]*t), np.exp(-G_M14[7]*t), np.exp(-G_M14[8]*t), np.exp(-G_M14[9]*t)]  # 2
+    P_M15 = [np.exp(-G_M15[0]*t), np.exp(-G_M15[1]*t), np.exp(-G_M15[2]*t), np.exp(-G_M15[3]*t), np.exp(-G_M15[4]*t),
+             np.exp(-G_M15[5]*t), np.exp(-G_M15[6]*t), np.exp(-G_M15[7]*t), np.exp(-G_M15[8]*t), np.exp(-G_M15[9]*t)]
+    P_M16 = [np.exp(-G_M162[0]*t), np.exp(-G_M162[1]*t), np.exp(-G_M162[2]*t), np.exp(-G_M162[3]*t), np.exp(-G_M162[4]*t),
+             np.exp(-G_M162[5]*t), np.exp(-G_M162[6]*t), np.exp(-G_M162[7]*t), np.exp(-G_M162[8]*t), np.exp(-G_M162[9]*t)]  # 4_1 шт
+    P_R2 = [np.exp(-G_R2[0]*t), np.exp(-G_R2[1]*t), np.exp(-G_R2[2]*t), np.exp(-G_R2[3]*t), np.exp(-G_R2[4]*t),
+            np.exp(-G_R2[5]*t), np.exp(-G_R2[6]*t), np.exp(-G_R2[7]*t), np.exp(-G_R2[8]*t), np.exp(-G_R2[9]*t)]  # 4_1 шт
+    P_R3 = [np.exp(-G_R3[0]*t), np.exp(-G_R3[1]*t), np.exp(-G_R3[2]*t), np.exp(-G_R3[3]*t), np.exp(-G_R3[4]*t),
+            np.exp(-G_R3[5]*t), np.exp(-G_R3[6]*t), np.exp(-G_R3[7]*t), np.exp(-G_R3[8]*t), np.exp(-G_R3[9]*t)]
+    P_R4 = [np.exp(-G_R4[0]*t), np.exp(-G_R4[1]*t), np.exp(-G_R4[2]*t), np.exp(-G_R4[3]*t), np.exp(-G_R4[4]*t),
+            np.exp(-G_R4[5]*t), np.exp(-G_R4[6]*t), np.exp(-G_R4[7]*t), np.exp(-G_R4[8]*t), np.exp(-G_R4[9]*t)]  # 7 шт
+    P_R5 = [np.exp(-G_R5[0]*t), np.exp(-G_R5[1]*t), np.exp(-G_R5[2]*t), np.exp(-G_R5[3]*t), np.exp(-G_R5[4]*t),
+            np.exp(-G_R5[5]*t), np.exp(-G_R5[6]*t), np.exp(-G_R5[7]*t), np.exp(-G_R5[8]*t), np.exp(-G_R5[9]*t)]
+    P_R6 = [np.exp(-G_R6[0]*t), np.exp(-G_R6[1]*t), np.exp(-G_R6[2]*t), np.exp(-G_R6[3]*t), np.exp(-G_R6[4]*t),
+            np.exp(-G_R6[5]*t), np.exp(-G_R6[6]*t), np.exp(-G_R6[7]*t), np.exp(-G_R6[8]*t), np.exp(-G_R6[9]*t)]  # 22_16 шт
+    P_R7 = [np.exp(-G_R7[0]*t), np.exp(-G_R7[1]*t), np.exp(-G_R7[2]*t), np.exp(-G_R7[3]*t), np.exp(-G_R7[4]*t),
+            np.exp(-G_R7[5]*t), np.exp(-G_R7[6]*t), np.exp(-G_R7[7]*t), np.exp(-G_R7[8]*t), np.exp(-G_R7[9]*t)]  # 2 шт
+    P_R8 = [np.exp(-G_R8[0]*t), np.exp(-G_R8[1]*t), np.exp(-G_R8[2]*t), np.exp(-G_R8[3]*t), np.exp(-G_R8[4]*t),
+            np.exp(-G_R8[5]*t), np.exp(-G_R8[6]*t), np.exp(-G_R8[7]*t), np.exp(-G_R8[8]*t), np.exp(-G_R8[9]*t)]
+    P_R9 = [np.exp(-G_R9[0]*t), np.exp(-G_R9[1]*t), np.exp(-G_R9[2]*t), np.exp(-G_R9[3]*t), np.exp(-G_R9[4]*t),
+            np.exp(-G_R9[5]*t), np.exp(-G_R9[6]*t), np.exp(-G_R9[7]*t), np.exp(-G_R9[8]*t), np.exp(-G_R9[9]*t)]
+    P_RZ1 = [np.exp(-G_RZ1[0]*t), np.exp(-G_RZ1[1]*t), np.exp(-G_RZ1[2]*t), np.exp(-G_RZ1[3]*t), np.exp(-G_RZ1[4]*t),
+            np.exp(-G_RZ1[5]*t), np.exp(-G_RZ1[6]*t), np.exp(-G_RZ1[7]*t), np.exp(-G_RZ1[8]*t), np.exp(-G_RZ1[9]*t)]
+    P_RZ2 = [np.exp(-G_RZ2[0]*t), np.exp(-G_RZ2[1]*t), np.exp(-G_RZ2[2]*t), np.exp(-G_RZ2[3]*t), np.exp(-G_RZ2[4]*t),
+            np.exp(-G_RZ2[5]*t), np.exp(-G_RZ2[6]*t), np.exp(-G_RZ2[7]*t), np.exp(-G_RZ2[8]*t), np.exp(-G_RZ2[9]*t)]
+    P_RZ3 = [np.exp(-G_RZ3[0]*t), np.exp(-G_RZ3[1]*t), np.exp(-G_RZ3[2]*t), np.exp(-G_RZ3[3]*t), np.exp(-G_RZ3[4]*t),
+            np.exp(-G_RZ2[5]*t), np.exp(-G_RZ2[6]*t), np.exp(-G_RZ2[7]*t), np.exp(-G_RZ2[8]*t), np.exp(-G_RZ3[9]*t)]  # 4_1 шт
+    P_V3 = [np.exp(-G_V3[0]*t), np.exp(-G_V3[1]*t), np.exp(-G_V3[2]*t), np.exp(-G_V3[3]*t), np.exp(-G_V3[4]*t),
+            np.exp(-G_V3[5]*t), np.exp(-G_V3[6]*t), np.exp(-G_V3[7]*t), np.exp(-G_V3[8]*t), np.exp(-G_V3[9]*t)]
+    P_D4 = [np.exp(-G_D4[0]*t), np.exp(-G_D4[1]*t), np.exp(-G_D4[2]*t), np.exp(-G_D4[3]*t), np.exp(-G_D4[4]*t),
+            np.exp(-G_D4[5]*t), np.exp(-G_D4[6]*t), np.exp(-G_D4[7]*t), np.exp(-G_D4[8]*t), np.exp(-G_D4[9]*t)]
+    P_T1 = [np.exp(-G_T1[0]*t), np.exp(-G_T1[1]*t), np.exp(-G_T1[2]*t), np.exp(-G_T1[3]*t), np.exp(-G_T1[4]*t),
+            np.exp(-G_T1[5]*t), np.exp(-G_T1[6]*t), np.exp(-G_T1[7]*t), np.exp(-G_T1[8]*t), np.exp(-G_T1[9]*t)]  # 5 шт
+    P_TR = [np.exp(-G_TR[0]*t), np.exp(-G_TR[1]*t), np.exp(-G_TR[2]*t), np.exp(-G_TR[3]*t), np.exp(-G_TR[4]*t),
+            np.exp(-G_TR[5]*t), np.exp(-G_TR[6]*t), np.exp(-G_TR[7]*t), np.exp(-G_TR[8]*t), np.exp(-G_TR[9]*t)]
 
     ###########################
     # Часть 3
     ##########################
-    # Состав МШВ без мажорирования MCHV будет списком (P(tn)... P(tn))
+    # ВБР  МШВ без мажорирования MCHV будет списком (P(tn)... P(tn))
     for x in range(len(P_TR)):
         MCHV[x] = P_R1[x] *\
                   P_V1[x] * P_V1[x] *\
@@ -353,6 +407,8 @@ for i in range(0, time):     # время до 90000 ч
         D_MCHV[x] = 1 - (1-MCHV[x])**2
         # дублирование с мажорированием
         D_MCHV_MAZH[x] = 1 - (1-MCHV_MAZH[x])**2
+
+        Int_ot
         ###########################
         # Часть 3
         ###########################
