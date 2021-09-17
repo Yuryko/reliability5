@@ -2,7 +2,7 @@
 # создано сотрудниками АО "НИИЧаспром"
 # Данная программа предназначена для анализа надежности радиоэлектронных модулей, выполн
 # !pip install brewer2mpl
-import numpy
+
 import numpy as np
 import pandas as pd
 # import matplotlib as mpl
@@ -12,6 +12,8 @@ import warnings
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
+
+
 
  # % matplotlib
 # from typing import List, Union
@@ -52,21 +54,25 @@ rc('font', **font)
 ###########################
 # Часть 1
 ###########################
-time = 90                   # вермя, тыс. часов
-VBR = np.ones(10) 		    # ВБР модуля без дублирования и мажорирования
-VBR_D = np.ones(10)  	    # ВБР модуля с дублированием без мажорирования
-VBR_MAZH = np.ones(10)  	# ВБР модуля с мажорированием без дублирования
-VBR_D_MAZH = np.ones(10)    # ВБР модуля с дублированием и мажорированием
-P_MCHV = np.zeros(10) 	    # временная переменная, содержит ВБР для определенной температуры
-MAZ = np.zeros(10)          # ВБР части мажоритароного узла, где элементы соеденены последовательно
-P_MAZ = np.zeros(10)	    # ВБР голосование 2 из 3
-T = []  		            # время наработки в часах
-MCHV = np.zeros(10)         # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ без мажорировани
-MCHV_MAZH = np.zeros(10)    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ с мажорированием
-D_MCHV = np.zeros(10) 	    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование без мажорировани
-D_MCHV_MAZH = np.zeros(10)  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование с мажорированием
 Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]    # Температура для которой расчитывается коэффициент
-
+time = 90                   # вермя, тыс. часов
+VBR = np.ones(len(Z)) 		    # ВБР модуля без дублирования и мажорирования
+VBR_D = np.ones(len(Z))  	    # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.ones(len(Z))  	# ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.ones(len(Z))    # ВБР модуля с дублированием и мажорированием
+P_MCHV = np.zeros(len(Z)) 	    # временная переменная, содержит ВБР для определенной температуры
+MAZ = np.zeros(len(Z))          # ВБР части мажоритароного узла, где элементы соеденены последовательно
+P_MAZ = np.zeros(len(Z))	    # ВБР голосование 2 из 3
+T = []  		                # время наработки в часах
+MCHV = np.zeros(len(Z))         # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ без мажорировани
+MCHV_MAZH = np.zeros(len(Z))    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ с мажорированием
+D_MCHV = np.zeros(len(Z)) 	    # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование без мажорировани
+D_MCHV_MAZH = np.zeros(len(Z))  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование с мажорированием
+GM_MAZ = np.zeros(len(Z))       # временная переменная для вычисления интенсивности отказов
+G_MAZ = np.zeros(len(Z))        # интенсивность отказов мажоритарного узла
+G_MAZH = np.zeros(len(Z))       # интенсивность отказов всего МШВ
+a = np.zeros(len(Z))            # среднее число поступающих в комплект ЗИП заявок на запасные части
+R = np.zeros(len(Z))            # временная переменная для вычисления количества модулей в ЗИП
 #######################
 # данные из справочника
 #######################
@@ -159,6 +165,7 @@ TR = 0.0019E-6 		# 1  Трансформатор ТИЛ3В "5"	АГ0.472.105ТУ
 G_R1 = [R1*KR[0], R1*KR[1], R1*KR[2], R1*KR[3], R1*KR[4], R1*KR[5], R1*KR[6], R1*KR[7], R1*KR[8], R1*KR[9]]
 G_V1 = [V1*KV[0], V1*KV[1], V1*KV[2], V1*KV[3], V1*KV[4], V1*KV[5], V1*KV[6], V1*KV[7], V1*KV[8], V1*KV[9]]
 G_V2 = [V2*KV[0], V2*KV[1], V2*KV[2], V2*KV[3], V2*KV[4], V2*KV[5], V2*KV[6], V2*KV[7], V2*KV[8], V2*KV[9]]
+G_V3 = [V3*KV[0], V3*KV[1], V3*KV[2], V3*KV[3], V3*KV[4], V3*KV[5], V3*KV[6], V3*KV[7], V3*KV[8], V3*KV[9]]
 G_D1 = [D1*KD[0], D1*KD[1], D1*KD[2], D1*KD[3], D1*KD[4], D1*KD[5], D1*KD[6], D1*KD[7], D1*KD[8], D1*KD[9]]
 G_D2 = [D2*KD[0], D2*KD[1], D2*KD[2], D2*KD[3], D2*KD[4], D2*KD[5], D2*KD[6], D2*KD[7], D2*KD[8], D2*KD[9]]
 G_D3 = [D3*KD[0], D3*KD[1], D3*KD[2], D3*KD[3], D3*KD[4], D3*KD[5], D3*KD[6], D3*KD[7], D3*KD[8], D3*KD[9]]
@@ -302,6 +309,76 @@ for i in range(0, time):     # время до 90000 ч
     ###########################
     # Часть 3
     ##########################
+
+    # Поток отказов для мажарированной дублированной
+    # 1 Для начал вычислим поток отказов мажоритарного узла
+    for x in range(len(G_RZ2)):
+        GM_MAZ[x] = G_M16[x] * G_R2[x] * G_R6[x] * G_R6[x] * G_RZ3[x]
+        # голосование 2 из 3
+        G_MAZ[x] = G_M9[x] * (3 * (GM_MAZ[x] ** 2) - 2 * (GM_MAZ[x] ** 3))
+    # 2 Теперь переменожим все интенсивности отказов и получим массив с 10 значениями для каждой температуры
+        G_MAZH[x] = G_MAZ[x] * \
+                    G_R1[x] * \
+                    G_V1[x] * G_V1[x] * \
+                    G_V2[x] * G_V2[x] * \
+                    G_D1[x] * G_D1[x] * \
+                    G_D2[x] * G_D2[x] * \
+                    G_D3[x] * G_D3[x] * \
+                    G_I1[x] * \
+                    G_I2[x] * \
+                    G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * \
+                    G_C2[x] * \
+                    G_C3[x] * \
+                    G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * \
+                    G_C4[x] * \
+                    G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * \
+                    G_C4[x] * \
+                    G_C5[x] * G_C5[x] * \
+                    G_C6[x] * G_C6[x] * \
+                    G_C7[x] * G_C7[x] * G_C7[x] * \
+                    G_M1[x] * \
+                    G_M2[x] * G_M2[x] * \
+                    G_M3[x] * G_M3[x] * \
+                    G_M4[x] * G_M4[x] * \
+                    G_M5[x] * \
+                    G_M6[x] * G_M6[x] * G_M6[x] * \
+                    G_M7[x] * \
+                    G_M8[x] * \
+                    G_M10[x] * G_M10[x] * G_M10[x] * G_M10[x] * \
+                    G_M11[x] * \
+                    G_M12[x] * \
+                    G_M13[x] * \
+                    G_M14[x] * G_M14[x] * \
+                    G_M15[x] * \
+                    G_R3[x] * \
+                    G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * \
+                    G_R5[x] * \
+                    G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * \
+                    G_R6[x] * G_R6[x] * \
+                    G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * \
+                    G_R7[x] * G_R7[x] * \
+                    G_R8[x] * \
+                    G_R9[x] * \
+                    G_RZ1[x] * \
+                    G_RZ2[x] * \
+                    G_RZ3[x] * \
+                    G_V3[x] * \
+                    G_D4[x] * \
+                    G_T1[x] * G_T1[x] * G_T1[x] * G_T1[x] * G_T1[x] * \
+                    G_TR[x]
+        # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
+        for x in range(len(G_MAZH)):
+            a[x] = 2 * G_MAZH[x]
+        # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
+        # n (количество модулей в ЗИП) должно давать R = 0,01
+        n = 0   # начнем 0
+        for x in range(len(R)):
+            while R[x] < 0.01:
+                R[]
+
+
+
+
     # ВБР  МШВ без мажорирования MCHV будет списком (P(tn)... P(tn))
     for x in range(len(P_TR)):
         MCHV[x] = P_R1[x] *\
@@ -410,7 +487,7 @@ for i in range(0, time):     # время до 90000 ч
         # дублирование с мажорированием
         D_MCHV_MAZH[x] = 1 - (1-MCHV_MAZH[x])**2
 
-        Int_ot
+        #Int_ot
         ###########################
         # Часть 3
         ###########################
@@ -433,9 +510,11 @@ def minor_tick(x, pos):
         return ""
     return "%.2f" % x
 
-ax.xaxis.set_major_locator(MultipleLocator(10000.000))
+ax.xaxis.set_major_locator(MultipleLocator(1000.000))
+#ax.xaxis.set_major_locator(MultipleLocator(10000.000)) для гигантских картинок
 ax.xaxis.set_minor_locator(AutoMinorLocator(9))
-ax.yaxis.set_major_locator(MultipleLocator(0.05))
+ax.yaxis.set_major_locator(MultipleLocator(0.025))
+
 # ax.yaxis.set_minor_locator(AutoMinorLocator(2))
 # ax.xaxis.set_minor_formatter(FuncFormatter(minor_tick))
 
@@ -521,9 +600,13 @@ ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
 rel = []    # подписи к осям
 
 fig1 = plt.figure(figsize=(50, 50))
-ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 220000)
+ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 22000)
 
-ax1.xaxis.set_major_locator(MultipleLocator(10000.000))
+# ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 220000) для гиганских картинок
+
+ax1.xaxis.set_major_locator(MultipleLocator(1000.000))
+# ax1.xaxis.set_major_locator(MultipleLocator(10000.000))  для гиганских картинок
+
 ax1.xaxis.set_minor_locator(AutoMinorLocator(9))
 ax1.yaxis.set_major_locator(MultipleLocator(0.025))
 
