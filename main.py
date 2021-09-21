@@ -2,6 +2,7 @@
 # создано сотрудниками АО "НИИЧаспром"
 # Данная программа предназначена для анализа надежности радиоэлектронных модулей, выполн
 # !pip install brewer2mpl
+import math
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ import warnings
 from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
+from math import e
 
 
 
@@ -210,6 +212,76 @@ G_T1 = [T1*KD[0], T1*KD[1], T1*KD[2], T1*KD[3], T1*KD[4], T1*KD[5], T1*KD[6], T1
 G_TR = [TR*KTR[0], TR*KTR[1], TR*KTR[2], TR*KTR[3], TR*KTR[4], TR*KTR[5], TR*KTR[6], TR*KTR[7], TR*KTR[8], TR*KTR[9]]
 
 # Вычисляем ВБР для всех входящих элементов
+# Поток отказов для мажарированной дублированной
+# 1 Для начал вычислим поток отказов мажоритарного узла
+for x in range(len(G_RZ2)):
+    GM_MAZ[x] = G_M16[x] + G_R2[x] + G_R6[x] + G_R6[x] + G_RZ3[x]
+    # голосование 2 из 3
+    G_MAZ[x] = G_M9[x] + (3 * (GM_MAZ[x] * 2) - 2 * (GM_MAZ[x] * 3))
+    # 2 Теперь переменожим все интенсивности отказов и получим массив с 10 значениями для каждой температуры
+    G_MAZH[x] = G_MAZ[x] + \
+                G_R1[x] + \
+                G_V1[x] + G_V1[x] + \
+                G_V2[x] * G_V2[x] + \
+                G_D1[x] + G_D1[x] + \
+                G_D2[x] + G_D2[x] + \
+                G_D3[x] + G_D3[x] + \
+                G_I1[x] + \
+                G_I2[x] + \
+                G_C1[x] + G_C1[x] + G_C1[x] + G_C1[x] + G_C1[x] + G_C1[x] + G_C1[x] + G_C1[x] + \
+                G_C2[x] + \
+                G_C3[x] + \
+                G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + \
+                G_C4[x] + \
+                G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + G_C4[x] + \
+                G_C4[x] + \
+                G_C5[x] + G_C5[x] + \
+                G_C6[x] + G_C6[x] + \
+                G_C7[x] + G_C7[x] + G_C7[x] + \
+                G_M1[x] + \
+                G_M2[x] + G_M2[x] + \
+                G_M3[x] + G_M3[x] + \
+                G_M4[x] + G_M4[x] + \
+                G_M5[x] + \
+                G_M6[x] + G_M6[x] + G_M6[x] + \
+                G_M7[x] + \
+                G_M8[x] + \
+                G_M10[x] + G_M10[x] + G_M10[x] + G_M10[x] + \
+                G_M11[x] + \
+                G_M12[x] + \
+                G_M13[x] + \
+                G_M14[x] + G_M14[x] + \
+                G_M15[x] + \
+                G_R3[x] + \
+                G_R4[x] + G_R4[x] + G_R4[x] + G_R4[x] + G_R4[x] + G_R4[x] + G_R4[x] + \
+                G_R5[x] + \
+                G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + \
+                G_R6[x] + G_R6[x] + \
+                G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + G_R6[x] + \
+                G_R7[x] + G_R7[x] + \
+                G_R8[x] + \
+                G_R9[x] + \
+                G_RZ1[x] + \
+                G_RZ2[x] + \
+                G_RZ3[x] + \
+                G_V3[x] + \
+                G_D4[x] + \
+                G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
+                G_TR[x]
+    # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
+su_gamma = 0
+n = 1  # начнем 0
+for x in range(len(G_MAZH)):
+    a[x] = 2 * G_MAZH[x]
+    gamma = n + 2  # гамма в формуле
+    su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
+    R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))
+
+print R
+
+    # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
+    # n (количество модулей в ЗИП) должно давать R = 0,01
+
  
 for i in range(0, time):     # время до 90000 ч
     t = (i + 1) * 1000                                                                                                # шт с мажориров _шт без маж
@@ -309,74 +381,6 @@ for i in range(0, time):     # время до 90000 ч
     ###########################
     # Часть 3
     ##########################
-
-    # Поток отказов для мажарированной дублированной
-    # 1 Для начал вычислим поток отказов мажоритарного узла
-    for x in range(len(G_RZ2)):
-        GM_MAZ[x] = G_M16[x] * G_R2[x] * G_R6[x] * G_R6[x] * G_RZ3[x]
-        # голосование 2 из 3
-        G_MAZ[x] = G_M9[x] * (3 * (GM_MAZ[x] ** 2) - 2 * (GM_MAZ[x] ** 3))
-    # 2 Теперь переменожим все интенсивности отказов и получим массив с 10 значениями для каждой температуры
-        G_MAZH[x] = G_MAZ[x] * \
-                    G_R1[x] * \
-                    G_V1[x] * G_V1[x] * \
-                    G_V2[x] * G_V2[x] * \
-                    G_D1[x] * G_D1[x] * \
-                    G_D2[x] * G_D2[x] * \
-                    G_D3[x] * G_D3[x] * \
-                    G_I1[x] * \
-                    G_I2[x] * \
-                    G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * G_C1[x] * \
-                    G_C2[x] * \
-                    G_C3[x] * \
-                    G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * \
-                    G_C4[x] * \
-                    G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * G_C4[x] * \
-                    G_C4[x] * \
-                    G_C5[x] * G_C5[x] * \
-                    G_C6[x] * G_C6[x] * \
-                    G_C7[x] * G_C7[x] * G_C7[x] * \
-                    G_M1[x] * \
-                    G_M2[x] * G_M2[x] * \
-                    G_M3[x] * G_M3[x] * \
-                    G_M4[x] * G_M4[x] * \
-                    G_M5[x] * \
-                    G_M6[x] * G_M6[x] * G_M6[x] * \
-                    G_M7[x] * \
-                    G_M8[x] * \
-                    G_M10[x] * G_M10[x] * G_M10[x] * G_M10[x] * \
-                    G_M11[x] * \
-                    G_M12[x] * \
-                    G_M13[x] * \
-                    G_M14[x] * G_M14[x] * \
-                    G_M15[x] * \
-                    G_R3[x] * \
-                    G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * G_R4[x] * \
-                    G_R5[x] * \
-                    G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * \
-                    G_R6[x] * G_R6[x] * \
-                    G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * G_R6[x] * \
-                    G_R7[x] * G_R7[x] * \
-                    G_R8[x] * \
-                    G_R9[x] * \
-                    G_RZ1[x] * \
-                    G_RZ2[x] * \
-                    G_RZ3[x] * \
-                    G_V3[x] * \
-                    G_D4[x] * \
-                    G_T1[x] * G_T1[x] * G_T1[x] * G_T1[x] * G_T1[x] * \
-                    G_TR[x]
-        # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
-        for x in range(len(G_MAZH)):
-            a[x] = 2 * G_MAZH[x]
-        # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
-        # n (количество модулей в ЗИП) должно давать R = 0,01
-        n = 0   # начнем 0
-        for x in range(len(R)):
-            while R[x] < 0.01:
-                R[]
-
-
 
 
     # ВБР  МШВ без мажорирования MCHV будет списком (P(tn)... P(tn))
@@ -636,5 +640,5 @@ ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
 ax1.legend(fontsize=14)
 
-plt.show()
+# plt.show() # раскоментровать для графиков
 
