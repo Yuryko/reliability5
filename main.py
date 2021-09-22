@@ -74,7 +74,7 @@ GM_MAZ = np.zeros(len(Z))       # временная переменная для
 G_MAZ = np.zeros(len(Z))        # интенсивность отказов мажоритарного узла
 G_MAZH = np.zeros(len(Z))       # интенсивность отказов всего МШВ
 a = np.zeros(len(Z))            # среднее число поступающих в комплект ЗИП заявок на запасные части
-R = np.zeros(len(Z))            # временная переменная для вычисления количества модулей в ЗИП
+R = [1, 1, 1 ,1, 1, 1, 1, 1, 1, 1]            # временная переменная для вычисления количества модулей в ЗИП
 #######################
 # данные из справочника
 #######################
@@ -269,14 +269,22 @@ for x in range(len(G_RZ2)):
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
-su_gamma = 0
-n = 1  # начнем 0
 for x in range(len(G_MAZH)):
-    a[x] = 2 * G_MAZH[x]
-    gamma = n + 2  # гамма в формуле
-    su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
-    R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))
+    a[x] = 2 * G_MAZH[x] * 5000
 
+for x in range(len(R)):
+    su_gamma = 0
+    n = 3 # начнем 0
+    while R[x] >= 0.01:
+        gamma = n + 2  # гамма в формуле
+        su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
+        R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))*10**(-9)
+        n = n+1
+        print ('n='), n
+        print ('R ['), x, ('] ='), R[x]
+        print ('su_gamma ['), x, ('] ='), su_gamma
+
+print n
 print R
 
     # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
