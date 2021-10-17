@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 import pandas as pd
-# import matplotlib as mpl
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
@@ -269,15 +269,15 @@ for x in range(len(G_RZ2)):
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
-su_gamma = 0
-n = 1  # начнем 0
-for x in range(len(G_MAZH)):
-    a[x] = 2 * G_MAZH[x]
-    gamma = n + 2  # гамма в формуле
-    su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
-    R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))
+# su_gamma = 0
+# n = 1  # начнем 0
+# for x in range(len(G_MAZH)):
+#    a[x] = 2 * G_MAZH[x]
+#    gamma = n + 2  # гамма в формуле
+#    su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
+#    R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))
 
-print R
+# print R
 
     # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
     # n (количество модулей в ЗИП) должно давать R = 0,01
@@ -640,5 +640,5 @@ ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
 ax1.legend(fontsize=14)
 
-# plt.show() # раскоментровать для графиков
+plt.show() # раскоментровать для графиков
 
