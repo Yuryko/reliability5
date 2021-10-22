@@ -269,24 +269,26 @@ for x in range(len(G_RZ2)):
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
-
+#n = 0
+#R = 0
 for x in range(len(G_MAZH)):
     a[x] = 2 * G_MAZH[x] * 5000
-
+B = 1
 for x in range(len(R)):
     su_gamma = 0
-    n = 3 # начнем 0
-    while R[x] >= 0.01:
+    n = 0 # начнем 0
+    while B >= 0.01:
         gamma = n + 2  # гамма в формуле
-        su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
-        R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma)))*10**(-9)
-        n = n+1
+        su_gamma = su_gamma + (gamma - n - 1) * ((a[0] ** gamma) / np.math.factorial(gamma))
+        B = -math.log(e, 1 - (1 / a[0]) * (np.exp(-a[0]) * (su_gamma)))*10**(-9)
         print ('n='), n
-        print ('R ['), x, ('] ='), R[x]
-        print ('su_gamma ['), x, ('] ='), su_gamma
+        n = n+1
+        print ('B ['), n, ('] ='), B
+    print ('su_gamma ['), n, ('] ='), su_gamma
 
-print n
-print R
+
+        #print n
+        #print R
 
     # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
     # n (количество модулей в ЗИП) должно давать R = 0,01
@@ -649,5 +651,5 @@ ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
 ax1.legend(fontsize=14)
 
-plt.show() # раскоментровать для графиков
+# plt.show() # раскоментровать для графиков
 
