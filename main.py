@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 import pandas as pd
-# import matplotlib as mpl
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
@@ -269,6 +269,7 @@ for x in range(len(G_RZ2)):
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
+
 for x in range(len(G_MAZH)):
     a[x] = 2 * G_MAZH[x] * 5000
 
@@ -648,5 +649,5 @@ ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
 ax1.legend(fontsize=14)
 
-# plt.show() # раскоментровать для графиков
+plt.show() # раскоментровать для графиков
 
