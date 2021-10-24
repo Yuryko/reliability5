@@ -268,30 +268,33 @@ for x in range(len(G_RZ2)):
                 G_D4[x] + \
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
-    # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
-#n = 0
+
+# 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
+n = 0
 #R = 0
-for x in range(len(G_MAZH)):
-    a[x] = 2 * G_MAZH[x] * 5000
+
+a = 2 * G_MAZH[9] * 5000
 B = 1
 for x in range(len(R)):
     su_gamma = 0
-    n = 0 # начнем 0
-    while B >= 0.01:
+    n = 1 # начнем 0
+    while B >= 0.001:
         gamma = n + 2  # гамма в формуле
-        su_gamma = su_gamma + (gamma - n - 1) * ((a[0] ** gamma) / np.math.factorial(gamma))
-        B = -math.log(e, 1 - (1 / a[0]) * (np.exp(-a[0]) * (su_gamma)))*10**(-9)
+        su_gamma = np.exp(-a) * n * ((a ** gamma) / np.math.factorial(gamma))
+        B = -math.log(1 - (1 / a) * (np.exp(-a) * n * ((a ** gamma) / np.math.factorial(gamma))))
         print ('n='), n
         n = n+1
         print ('B ['), n, ('] ='), B
-    print ('su_gamma ['), n, ('] ='), su_gamma
-
-
-        #print n
+        print ('su_gamma ['), n, ('] ='), su_gamma
+    print a
         #print R
 
     # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
     # n (количество модулей в ЗИП) должно давать R = 0,01
+# B = -math.log(e, 1 - (a**3)/((a**3) + (n-1)*(1+a**2)))
+# print a
+# print n
+# print B
 
  
 for i in range(0, time):     # время до 90000 ч
