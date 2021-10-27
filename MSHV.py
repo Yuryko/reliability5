@@ -315,26 +315,6 @@ for x in range(len(G_RZ2)):
                 G_TR[x]
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
 
-for x in range(len(G_MAZH)):
-    a[x] = 2 * G_MAZH[x] * 5000
-
-for x in range(len(R)):
-    su_gamma = 0
-    n = 3  # начнем 0
-    while R[x] >= 0.01:
-        gamma = n + 2  # гамма в формуле
-        su_gamma = su_gamma + (gamma - n - 1) * ((a[x] ** gamma) / np.math.factorial(gamma))
-        R[x] = -math.log(e, 1 - (1 / a[x]) * (np.exp(-a[x]) * (su_gamma))) * 10 ** (-9)
-        n = n + 1
-        print('n='), n
-        print('R ['), x, ('] ='), R[x]
-        print('su_gamma ['), x, ('] ='), su_gamma
-
-print
-n
-print
-R
-
 # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
 # n (количество модулей в ЗИП) должно давать R = 0,01
 
@@ -649,8 +629,16 @@ for i in range(0, time):  # время до 90000 ч
     VBR_D = np.vstack((VBR_D, D_MCHV))
     VBR_D_MAZH = np.vstack((VBR_D_MAZH, D_MCHV_MAZH))
     T.append(t)
-np.save("T",T)
-np.save("VBR",VBR)
-np.save("MCHV",VCHV)
-np.save("VBR_MAZH",VBR_MAZH)
+
+np.save("T", T)
+np.save("VBR", VBR)
+np.save("VBR_MAZH", VBR_MAZH)
+np.save("VBR_D_MAZH", VBR_D_MAZH)
 np.save("VBR_D", VBR_D)
+
+np.save("MCHV", MCHV)
+np.save("MCHV_MAZH", MCHV_MAZH)
+np.save("D_MCHV", D_MCHV)
+np.save("D_MCHV_MAZH", D_MCHV_MAZH)
+
+# T, VBR_D_MAZH, D_MCHV_MAZH, MCHV ,MCHV_MAZH, D_MCHV, VBR, VBR_MAZH, VBR_D, VBR_D_MAZH

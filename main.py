@@ -15,6 +15,26 @@ from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits import mplot3d
 from math import e
 
+Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]  # Температура для которой расчитывается коэффициент
+time = 90  # вермя, тыс. часов
+VBR = np.ones(len(Z))  # ВБР модуля без дублирования и мажорирования
+VBR_D = np.ones(len(Z))  # ВБР модуля с дублированием без мажорирования
+VBR_MAZH = np.ones(len(Z))  # ВБР модуля с мажорированием без дублирования
+VBR_D_MAZH = np.ones(len(Z))  # ВБР модуля с дублированием и мажорированием
+P_MCHV = np.zeros(len(Z))  # временная переменная, содержит ВБР для определенной температуры
+MAZ = np.zeros(len(Z))  # ВБР части мажоритароного узла, где элементы соеденены последовательно
+P_MAZ = np.zeros(len(Z))  # ВБР голосование 2 из 3
+T = []  # время наработки в часах
+MCHV = np.zeros(len(Z))  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ без мажорировани
+MCHV_MAZH = np.zeros(len(Z))  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ с мажорированием
+D_MCHV = np.zeros(len(Z))  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование без мажорировани
+D_MCHV_MAZH = np.zeros(
+len(Z))  # для одного значения времени (ВБР(t=25), ... , ВБР(t=70)) МШВ дублирование с мажорированием
+GM_MAZ = np.zeros(len(Z))  # временная переменная для вычисления интенсивности отказов
+G_MAZ = np.zeros(len(Z))  # интенсивность отказов мажоритарного узла
+G_MAZH = np.zeros(len(Z))  # интенсивность отказов всего МШВ
+a = np.zeros(len(Z))  # среднее число поступающих в комплект ЗИП заявок на запасные части
+R = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # временная переменная для вычисления количества модулей в ЗИП
 
 
  # % matplotlib
@@ -58,6 +78,16 @@ rc('font', **font)
 ###########################
 
 '''Часть 5'''
+T = np.load("T.npy")
+VBR = np.load("VBR.npy")
+VBR_MAZH = np.load("VBR_MAZH.npy")
+VBR_D_MAZH = np.load("VBR_D_MAZH.npy")
+VBR_D = np.load("VBR_D.npy")
+
+MCHV = np.load("MCHV.npy")
+MCHV_MAZH = np.load("MCHV_MAZH.npy")
+D_MCHV = np.load("D_MCHV.npy")
+D_MCHV_MAZH = np.load("D_MCHV_MAZH.npy")
 
 fig = plt.figure(figsize=(50, 50))
 # plt.tick_params(axis='both', which='major', labelsize=14)
@@ -195,5 +225,7 @@ ax1.set_ylabel(u"Вероятность", fontsize=14)
 # ax1.set_zlabel(u"Вероятность")
 ax1.legend(fontsize=14)
 
-# plt.show() # раскоментровать для графиков
+plt.show() # раскоментровать для графиков
+# T, VBR_D_MAZH, D_MCHV_MAZH, MCHV_MAZH, D_MCHV, VBR, VBR_MAZH, VBR_D, VBR_D_MAZH
+
 
