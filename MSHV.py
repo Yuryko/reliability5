@@ -75,7 +75,11 @@ G_MAZH = np.zeros(len(Z))  # интенсивность отказов всег�
 a = np.zeros(len(Z))  # среднее число поступающих в комплект ЗИП заявок на запасные части
 R = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # временная переменная для вычисления количества модулей в ЗИП
 zip = np.zeros(len(Z))
+# D_MCHV_ZIP_TEM = np.ones(len(Z))
+COUNT_ZIP = np.zeros(len(Z))
+DZIP = np.zeros(len(Z))
 k = 1 # неснижаемый запас
+# D_MCHV_ZIP = [np.zeros(Z)]
 #######################
 # данные из справочника
 #######################
@@ -316,14 +320,14 @@ for x in range(len(G_RZ2)):
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
     for y in range(len(R)):
-        a[y] = G_MAZH[y] * 10000
+        a[y] = G_MAZH[y] * 5000
         n = 2  # начнем 0
-        while R[y] >= 10E-7:
+        while R[y] >= 10E-3:
             R[y] = -math.log(1 - a[y] ** (k + 2) / (a[y] ** (k + 2) + (n - k) * (1 + a[y]) ** (k + 1)))
             n = n + 1
             zip[y] = n
-    print ('R = '), R
-    print ('ZIP ='), zip
+#    print ('R = '), R
+#    print ('ZIP ='), zip
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
 
 # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
@@ -576,6 +580,7 @@ for i in range(0, time):  # время до 90000 ч
                   P_D4[x] * \
                   P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * P_T1[x] * \
                   P_TR[x]
+
         # ВБР элементов мажоритарного узла, которые соединнных последовательно
         MAZ[x] = P_M16[x] * P_R2[x] * P_R6[x] * P_R6[x] * P_RZ3[x]
         # голосование 2 из 3
@@ -634,8 +639,26 @@ for i in range(0, time):  # время до 90000 ч
         D_MCHV[x] = 1 - (1 - MCHV[x]) ** 2
         # дублирование с мажорированием
         D_MCHV_MAZH[x] = 1 - (1 - MCHV_MAZH[x]) ** 2
+        n = 0
+        D_MCHV_ZIP = 0
+        TEM = math.factorial(n+1)**(-1)
 
-        # Int_ot
+
+        D_MCHV_ZIP = 1 - ((1- MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** n)
+        D_MCHV_ZIP_B = 1 - (1 - MCHV[x]) ** 2
+        print D_MCHV_ZIP, D_MCHV_ZIP_B, TEM
+        '''
+        while D_MCHV_ZIP < 0.996:
+            n = n+1
+            D_MCHV_ZIP = (2 * MCHV[x] + MCHV[x] ** 2) - (1 - 1 / n * MCHV[x] ** n)
+            DZIP[x] = n
+            if n > 40:
+                break
+        '''
+
+
+
+            # Int_ot
         ###########################
         # Часть 3
         ###########################
@@ -644,17 +667,19 @@ for i in range(0, time):  # время до 90000 ч
     VBR_MAZH = np.vstack((VBR_MAZH, MCHV_MAZH))
     VBR_D = np.vstack((VBR_D, D_MCHV))
     VBR_D_MAZH = np.vstack((VBR_D_MAZH, D_MCHV_MAZH))
+#    COUNT_ZIP = np.vstack((COUNT_ZIP, DZIP))
     T.append(t)
 
-np.save("T", T)
-np.save("VBR", VBR)
-np.save("VBR_MAZH", VBR_MAZH)
-np.save("VBR_D_MAZH", VBR_D_MAZH)
-np.save("VBR_D", VBR_D)
+#print COUNT_ZIP
+# np.save("T", T)
+# np.save("VBR", VBR)
+# np.save("VBR_MAZH", VBR_MAZH)
+# np.save("VBR_D_MAZH", VBR_D_MAZH)
+# np.save("VBR_D", VBR_D)
 
-np.save("MCHV", MCHV)
-np.save("MCHV_MAZH", MCHV_MAZH)
-np.save("D_MCHV", D_MCHV)
-np.save("D_MCHV_MAZH", D_MCHV_MAZH)
+# np.save("MCHV", MCHV)
+# np.save("MCHV_MAZH", MCHV_MAZH)
+# np.save("D_MCHV", D_MCHV)
+# np.save("D_MCHV_MAZH", D_MCHV_MAZH)
 
 # T, VBR_D_MAZH, D_MCHV_MAZH, MCHV ,MCHV_MAZH, D_MCHV, VBR, VBR_MAZH, VBR_D, VBR_D_MAZH
