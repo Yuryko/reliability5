@@ -55,7 +55,7 @@ rc('font', **font)
 ###########################
 
 Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]  # Температура для которой расчитывается коэффициент
-time = 90  # вермя, тыс. часов
+time = 131  # вермя, тыс. часов
 VBR = np.ones(len(Z))  # ВБР модуля без дублирования и мажорирования
 VBR_D = np.ones(len(Z))  # ВБР модуля с дублированием без мажорирования
 VBR_MAZH = np.ones(len(Z))  # ВБР модуля с мажорированием без дублирования
@@ -639,22 +639,33 @@ for i in range(0, time):  # время до 90000 ч
         D_MCHV[x] = 1 - (1 - MCHV[x]) ** 2
         # дублирование с мажорированием
         D_MCHV_MAZH[x] = 1 - (1 - MCHV_MAZH[x]) ** 2
-        n = 0
+        '''
+        n = 5
+
         D_MCHV_ZIP = 0
-        TEM = math.factorial(n+1)**(-1)
+        TEM = math.factorial(n-1)**(-1)
 
 
-        D_MCHV_ZIP = 1 - ((1- MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** n)
+        # D_MCHV_ZIP = 1 - ((1- MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** n)
+        D_MCHV_ZIP = 1 - ((1 - MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** (n-1))
         D_MCHV_ZIP_B = 1 - (1 - MCHV[x]) ** 2
         print D_MCHV_ZIP, D_MCHV_ZIP_B, TEM
         '''
+        n = 1 # при 1 количество модулей ЗИП равно 0, это необходимо для работы формулы
+        D_MCHV_ZIP = 0
         while D_MCHV_ZIP < 0.996:
-            n = n+1
-            D_MCHV_ZIP = (2 * MCHV[x] + MCHV[x] ** 2) - (1 - 1 / n * MCHV[x] ** n)
-            DZIP[x] = n
+            TEM = math.factorial(n - 1) ** (-1)
+            D_MCHV_ZIP = 1 - ((1 - MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** (n-1))
+            DZIP[x] = n - 1
+            # print DZIP
+            n = n + 1
             if n > 40:
                 break
-        '''
+        if x > 8:
+            # print DZIP
+            COUNT_ZIP = np.vstack((COUNT_ZIP, DZIP))
+
+
 
 
 
@@ -669,9 +680,11 @@ for i in range(0, time):  # время до 90000 ч
     VBR_D_MAZH = np.vstack((VBR_D_MAZH, D_MCHV_MAZH))
 #    COUNT_ZIP = np.vstack((COUNT_ZIP, DZIP))
     T.append(t)
-
-#print COUNT_ZIP
+# COUNT_ZIP = np.delete(COUNT_ZIP, 0)
+print COUNT_ZIP
 # np.save("T", T)
+# np.save("T15", T)
+np.save("COUNT_ZIP", COUNT_ZIP)
 # np.save("VBR", VBR)
 # np.save("VBR_MAZH", VBR_MAZH)
 # np.save("VBR_D_MAZH", VBR_D_MAZH)
