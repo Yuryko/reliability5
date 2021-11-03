@@ -680,11 +680,11 @@ for i in range(0, time):  # время до 90000 ч
     VBR_D_MAZH = np.vstack((VBR_D_MAZH, D_MCHV_MAZH))
 #    COUNT_ZIP = np.vstack((COUNT_ZIP, DZIP))
     T.append(t)
-# COUNT_ZIP = np.delete(COUNT_ZIP, 0)
+COUNT_ZIP = np.delete(COUNT_ZIP, 0, 0)
 print COUNT_ZIP
 # np.save("T", T)
 # np.save("T15", T)
-np.save("COUNT_ZIP", COUNT_ZIP)
+# np.save("COUNT_ZIP", COUNT_ZIP)
 # np.save("VBR", VBR)
 # np.save("VBR_MAZH", VBR_MAZH)
 # np.save("VBR_D_MAZH", VBR_D_MAZH)
