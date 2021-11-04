@@ -2,18 +2,11 @@
 # создано сотрудниками АО "НИИЧаспром"
 # Данная программа предназначена для анализа надежности радиоэлектронных модулей, выполн
 # !pip install brewer2mpl
-import math
-
 import numpy as np
-import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import seaborn as sns
 import warnings
-from matplotlib.ticker import AutoMinorLocator, MultipleLocator, FuncFormatter
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits import mplot3d
-from math import e
+from matplotlib.ticker import AutoMinorLocator, MultipleLocator
+
 
 Z = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70]  # Температура для которой расчитывается коэффициент
 
@@ -107,7 +100,7 @@ ax.plot(T, VBR_D_MAZH[0:len(T), 0], lw=2, label=u"дублирование и м
 
 # ax.set_title(u"Вероятность безотказной работы", fontsize=20, verticalalignment='bottom')
 ax.set_xlabel(u"Время работы (ч)", fontsize=14)
-ax.set_ylabel(u"Вероятность", fontsize=14)
+ax.set_ylabel(u"Вероятность безотказной работы", fontsize=14)
 
 ax.legend()
 
@@ -162,8 +155,8 @@ ax.annotate(rel_mazh_d, xy=(T[-1] - 100, D_MCHV_MAZH[0]), xycoords='data',
 #                            connectionstyle="arc3",
 #                            color=color))
 
-ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
-        fontsize=14, ha="right", color='.5')
+# ax.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
+#        fontsize=14, ha="right", color='.5')
 
 
 rel = []    # подписи к осям
@@ -191,7 +184,7 @@ ax1.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
 for x in range(len(Z)):
     ax1.plot(T, VBR_D_MAZH[0:len(T), x], lw=2, label='t='+(str(Z[x]))+r'C$^{\circ}$')
-    rel.append(str(round(D_MCHV_MAZH[x], 3)))
+    rel.append(str(round((D_MCHV_MAZH[x]), 3)))
     ax1.annotate(rel[x], xy=(T[-1] - 100, D_MCHV_MAZH[x]), xycoords='data',
             xytext=(T[-1] + 1000, D_MCHV_MAZH[x]), textcoords='data',
             weight='bold', color=color, fontsize=14)
@@ -201,71 +194,14 @@ ax1.text(4.0, -0.4, "(JSC) Scientific Research Institute For Watch Industry",
         fontsize=14, ha="right", color='.5')
 
 ax1.set_xlabel(u"Время работы (ч)", fontsize=14)
-ax1.set_ylabel(u"Вероятность", fontsize=14)
-# ax1.set_zlabel(u"Вероятность")
+ax1.set_ylabel(u"Вероятность безотказной работы", fontsize=14)
 ax1.legend(fontsize=14)
 
 
 
-fig2 = plt.figure(figsize=(10, 10))
-ax2 = fig2.add_subplot(1, 1, 1, aspect=T[-1] + 220000)
-
-# ax1 = fig1.add_subplot(1, 1, 1, aspect=T[-1] + 220000) для гиганских картинок
-
-ax2.xaxis.set_major_locator(MultipleLocator(10000.000)) # шкала снизу
-# ax1.xaxis.set_major_locator(MultipleLocator(10000.000))  для гиганских картинок
-
-ax2.xaxis.set_minor_locator(AutoMinorLocator(9))
-ax2.yaxis.set_major_locator(MultipleLocator(0.025))
-
-ax2.set_xlim(0, T[-1] + 100)
-ax2.set_ylim(0.72, 1.01)
-
-ax2.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
-
-# ax1.annotate(r't, C$^{\circ}$', xy=(T[-1] - 100, D_MCHV_MAZH[5]), xycoords='data',
-#            xytext=(T[-1] + 1000, 1.01), textcoords='data',
-#            weight='bold', color=color)
-
-# график 25 градусов
-ax2.plot(T, VBR_D_MAZH[0:len(T), 0], lw=2, label='t='+(str(Z[0]))+r'C$^{\circ}$')
-rel.append(str(round(D_MCHV_MAZH[0], 30)))
-ax2.annotate(rel[0], xy=(T[-1] - 100, D_MCHV_MAZH[0]), xycoords='data',
-             xytext=(T[-1] + 1000, D_MCHV_MAZH[0]), textcoords='data',
-             weight='bold', color=color, fontsize=14)
-#    color = 'blue'
-
-# график 75 градусов
-ax2.plot(T, VBR_D_MAZH[0:len(T), 9], lw=2, label='t='+(str(Z[9]))+r'C$^{\circ}$', color = 'blue')
-rel.append(str(round(D_MCHV_MAZH[9], 3)))
-ax2.annotate(rel[9], xy=(T[-1] - 100, D_MCHV_MAZH[9]), xycoords='data',
-             xytext=(T[-1] + 1000, D_MCHV_MAZH[9]), textcoords='data',
-             weight='bold', color=color, fontsize=14)
-
-# circle(0.75, 1000, 0.5)
-
-#ax2.annotate("coor", xy=(10000, 0.8), xycoords='data',
-#            xytext=(10000, 0.9), textcoords='data',
-#            weight='bold', color=color, fontsize=14,
-#            arrowprops=dict(arrowstyle='wedge',
-#                            connectionstyle="arc3",
-#                            color=color))
-
-ax2.plot(10000, 0.8, linewidth=0,
-        marker='o', markerfacecolor='w', markeredgecolor='k')
-
-
-# ax2.annotate(circle(10000, 0.8, 0.15))
-
-#    color = 'blue'
-
-ax2.set_xlabel(u"Время работы (ч)", fontsize=14)
-ax2.set_ylabel(u"Вероятность", fontsize=14)
-# ax1.set_zlabel(u"Вероятность")
-ax2.legend(fontsize=14)
-
-
 plt.show() # раскоментровать для графиков
+# fig.savefig('big1.png', dpi=400)
+# fig1.savefig('big2.png', dpi=400)
 
 
 

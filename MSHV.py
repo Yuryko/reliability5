@@ -655,7 +655,7 @@ for i in range(0, time):  # время до 90000 ч
         D_MCHV_ZIP = 0
         while D_MCHV_ZIP < 0.996:
             TEM = math.factorial(n - 1) ** (-1)
-            D_MCHV_ZIP = 1 - ((1 - MCHV[x]) ** 2) * (TEM * (1 - MCHV[x]) ** (n-1))
+            D_MCHV_ZIP = 1 - ((1 - MCHV[x]) ** 2) * TEM * (1 - MCHV[x]) ** (n-1)
             DZIP[x] = n - 1
             # print DZIP
             n = n + 1
