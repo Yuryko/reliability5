@@ -90,7 +90,7 @@ ax.set_ylim(0.55, 1.01)
 
 ax.grid(linestyle="--", linewidth=0.5, color='.25', zorder=-10)
 
-ax.plot(T, VBR[0:len(T), 0], lw=2, label=u"без мажорирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
+ax.plot(T, VBR[0:len(T), 0], lw=2, label=u"без резервирования")  # ax.plot(T, vbr, c=(0.25, 0.25, 1.00), lw=2, label="Blue signal", zorder=10)
 ax.plot(T, VBR_MAZH[0:len(T), 0], lw=2, label=u"мажорирование без дублирования")  # ax.plot(T, vbr1, c=(1.00, 0.25, 0.25), lw=2, label="Red signal")
 ax.plot(T, VBR_D[0:len(T), 0], lw=2, label=u"дублирование без мажорирования")
 ax.plot(T, VBR_D_MAZH[0:len(T), 0], lw=2, label=u"дублирование и мажорирование")
@@ -200,7 +200,7 @@ ax1.legend(fontsize=14)
 
 
 plt.show() # раскоментровать для графиков
-# fig.savefig('big1.png', dpi=400)
+fig.savefig('big1.png', dpi=400)
 # fig1.savefig('big2.png', dpi=400)
 
 

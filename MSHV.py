@@ -319,15 +319,15 @@ for x in range(len(G_RZ2)):
                 G_D4[x] + \
                 G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + G_T1[x] + \
                 G_TR[x]
-    for y in range(len(R)):
-        a[y] = G_MAZH[y] * 5000
-        n = 2  # начнем 0
-        while R[y] >= 10E-3:
-            R[y] = -math.log(1 - a[y] ** (k + 2) / (a[y] ** (k + 2) + (n - k) * (1 + a[y]) ** (k + 1)))
-            n = n + 1
-            zip[y] = n
-#    print ('R = '), R
-#    print ('ZIP ='), zip
+for y in range(len(R)):
+    a[y] = G_MAZH[y] * 5000
+    n = 2  # начнем 0
+    while R[y] >= 10E-7:
+        R[y] = -math.log(1 - a[y] ** (k + 2) / (a[y] ** (k + 2) + (n - k) * (1 + a[y]) ** (k + 1)))
+        zip[y] = n
+        n = n + 1
+print ('R = '), R
+print ('ZIP ='), zip
     # 3 теперь найдем а= m * гамма * Т ,  m = 2, T =5000
 
 # 4 теперь будем подбирать R (сложная формула ГОСТ РВ 27.3.03-2005 c. 13, ф.9.3),
@@ -681,7 +681,7 @@ for i in range(0, time):  # время до 90000 ч
 #    COUNT_ZIP = np.vstack((COUNT_ZIP, DZIP))
     T.append(t)
 COUNT_ZIP = np.delete(COUNT_ZIP, 0, 0)
-print COUNT_ZIP
+# print COUNT_ZIP
 # np.save("T", T)
 # np.save("T15", T)
 # np.save("COUNT_ZIP", COUNT_ZIP)
