@@ -1,6 +1,5 @@
 # coding=utf-8
-# создано сотрудниками АО "НИИЧаспром"
-# Данная программа предназначена для анализа надежности радиоэлектронных модулей, выполн
+# программа предназначена для построение графика объема ЗИП
 # !pip install brewer2mpl
 #
 # Import Data
@@ -48,7 +47,7 @@ for i in range(len(T)):
     ax1.bar(index[i], COUNT_ZIP[i, 0], 1, align='edge', color='pink')
 # два последних значения выводим отдельно для корректного отображения легенды
 
-ax1.bar(130, COUNT_ZIP[130, 9], 1, align='edge', color='1', label=u"Температура экспуатации")
+ax1.bar(130, COUNT_ZIP[130, 9], 1, align='edge', color='1', label=u"Температура окружающей среды")
 ax1.bar(130, COUNT_ZIP[130, 9], 1, align='edge', color='orange', label='t = 70' + r'C$^{\circ}$')
 ax1.bar(130, COUNT_ZIP[130, 0], 1, align='edge', color='pink', label='t = 25' + r'C$^{\circ}$')
 
